@@ -1,13 +1,12 @@
 import express from "express";
 import { connectToDB } from "./config/db";
+import router from "./routes/index";
 
 const app = express();
 
-connectToDB();
+// connectToDB();
 app.use(express.json());
+app.use("/api", router);
 
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-})
 
 export default app;
