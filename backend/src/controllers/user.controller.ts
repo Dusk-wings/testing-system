@@ -1,10 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createUser as createUserService, refereshToken as refereshTokenService } from "../services/user.services";
-
-export const getUser = (req: Request, res: Response, next: NextFunction) => {
-    console.log('Getting all Users');
-    res.send('Getting all Users');
-}
+import { createUser as createUserService, refereshToken as refereshTokenService, getUser as getUserService, updateUser as updateUserService } from "../services/user.services"
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const result = await createUserService(req.body)
@@ -44,7 +39,6 @@ export const refereshToken = async (req: Request, res: Response, next: NextFunct
     }
 
     const result = await refereshTokenService(user_id, refresh_token)
-    console.log(result.status)
     if (result.status === 200) {
         res.cookie('refresh_token', result.refresh_token, {
             httpOnly: true,
@@ -62,6 +56,36 @@ export const refereshToken = async (req: Request, res: Response, next: NextFunct
 
         return res.status(result.status).json({
             user_id: result.user_id,
+            message: result.message
+        })
+    }
+
+    return res.status(result.status).json({
+        message: result.message
+    })
+}
+
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = req.user?.id;
+    const result = await getUserService({ user_id: user_id })
+    if (result.status === 200) {
+        return res.status(result.status).json({
+            user: result.user,
+            message: result.message
+        })
+    }
+
+    return res.status(result.status).json({
+        message: result.message
+    })
+}
+
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = req.user?.id;
+    const body = req.body;
+    const result = await updateUserService({ user_id: user_id, ...body })
+    if (result.status === 200) {
+        return res.status(result.status).json({
             message: result.message
         })
     }

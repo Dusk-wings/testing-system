@@ -79,16 +79,38 @@ export const refereshToken = async (user_id: string, refresh_token: string) => {
     }
 }
 
-export const getUser = () => {
+export const getUser = async (data: { user_id: string }) => {
+    try {
+        const doesUserExist = await UserModel.findOne({ _id: data.user_id })
 
+        if (!doesUserExist) {
+            return { status: 404, message: "User not found" }
+        }
+        return { status: 200, user: { name: doesUserExist.name, email: doesUserExist.email }, message: "User Found" };
+    } catch (error) {
+        console.log(error);
+        return { status: 500, message: "Internal Server Error" }
+    }
 }
 
-export const getUserById = () => {
+export const updateUser = async (data: { user_id: string, name: string }) => {
+    try {
+        const doesUserExist = await UserModel.findOne({ _id: data.user_id })
 
-}
-
-export const updateUser = () => {
-
+        if (!doesUserExist) {
+            return { status: 404, message: "User not found" }
+        }
+        try {
+            await UserModel.updateOne({ _id: data.user_id }, { name: data.name })
+            return { status: 200, message: "User Updated" };
+        } catch (error) {
+            console.log(error);
+            return { status: 500, message: "Internal Server Error" }
+        }
+    } catch (error) {
+        console.log(error);
+        return { status: 500, message: "Internal Server Error" }
+    }
 }
 
 export const deleteUser = () => {
