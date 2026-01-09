@@ -1,3 +1,4 @@
+import { env } from "@src/config/env";
 import RefereshTokenModel from "@src/models/refereshToken.model";
 import UserModel from "@src/models/user.model";
 import { accessTokenGenrator } from "@src/utils/accessTokenGenrator";
@@ -13,7 +14,7 @@ export const createUser = async (data: UserDataType) => {
             return { status: 400, message: "User already exists" }
         }
 
-        const hashedPassword = await bcrypt.hash(data.password, 10);
+        const hashedPassword = await bcrypt.hash(data.password, parseInt(env.salt_round || "10"));
         try {
             const user = await UserModel.create({
                 name: data.name,
@@ -59,16 +60,15 @@ export const refereshToken = async (user_id: string, refresh_token: string) => {
         if (!doesTokenExist) {
             return { status: 404, message: "Token not found" }
         }
-
-        if (doesTokenExist.expires_at >= new Date().getTime()) {
+        if (doesTokenExist.expires_at < Date.now()) {
             return { status: 404, message: "Token expired" }
         }
         const [accessToken, expiresIn] = accessTokenGenrator(user_id);
-        const refreshToken = refreshTokenGenrator();
+        const newRefreshToken = refreshTokenGenrator();
 
         try {
-            await RefereshTokenModel.updateOne({ user_id: user_id, token: refresh_token }, { token: refreshToken, expires_at: new Date().getTime() + 1000 * 60 * 60 * 24 * 4 })
-            return { status: 200, user_id: user_id, access_token: accessToken, refresh_token: refreshToken, message: "User Created", access_token_expires_in: expiresIn };
+            await RefereshTokenModel.updateOne({ user_id: user_id, token: refresh_token }, { token: newRefreshToken, expires_at: Date.now() + 1000 * 60 * 60 * 24 * 4 })
+            return { status: 200, user_id: user_id, access_token: accessToken, refresh_token: newRefreshToken, message: "Token Issued Again", access_token_expires_in: expiresIn };
         } catch (error) {
             console.log(error);
             return { status: 500, message: "Internal Server Error" }

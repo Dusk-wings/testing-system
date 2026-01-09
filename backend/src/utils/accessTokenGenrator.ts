@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { tokenDateCalculator } from './tokenTimeCalculator';
+import { env } from "@src/config/env";
 
 const jtiGenrator = () => {
     const randomByte = crypto.randomBytes(32);
@@ -18,7 +19,7 @@ export const accessTokenGenrator = (user_id: string): [string, number] => {
         jti: jti,
     };
 
-    const SECRET = process.env.JWT_SECRET || ''
+    const SECRET = env.jwt_secret || ''
 
     const accessToken = jwt.sign(payload, SECRET, {
         expiresIn: expiresIn,

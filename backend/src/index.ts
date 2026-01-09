@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-// connectToDB();
+connectToDB();
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api", router);
