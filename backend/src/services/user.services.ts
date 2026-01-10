@@ -101,7 +101,7 @@ export const updateUser = async (data: { user_id: string, name: string }) => {
             return { status: 404, message: "User not found" }
         }
         try {
-            await UserModel.updateOne({ _id: data.user_id }, { name: data.name })
+            await UserModel.updateOne({ _id: data.user_id }, { $set: { name: data.name } })
             return { status: 200, message: "User Updated" };
         } catch (error) {
             console.log(error);
