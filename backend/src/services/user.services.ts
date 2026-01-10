@@ -113,6 +113,26 @@ export const updateUser = async (data: { user_id: string, name: string }) => {
     }
 }
 
-export const deleteUser = () => {
+export const deleteUser = async (data: { user_id: string, password: string }) => {
+    try {
+        const doesUserExist = await UserModel.findOne({ _id: data.user_id })
 
+        if (!doesUserExist) {
+            return { status: 404, message: "User not found" }
+        }
+        try {
+            const isPasswordCorrect = await bcrypt.compare(data.password, doesUserExist.password)
+            if (!isPasswordCorrect) {
+                return { status: 401, message: "Invalid Password" }
+            }
+            await UserModel.deleteOne({ _id: data.user_id })
+            return { status: 200, message: "User Deleted" };
+        } catch (error) {
+            console.log(error);
+            return { status: 500, message: "Internal Server Error" }
+        }
+    } catch (error) {
+        console.log(error);
+        return { status: 500, message: "Internal Server Error" }
+    }
 }

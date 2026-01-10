@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createUser as createUserService, refereshToken as refereshTokenService, getUser as getUserService, updateUser as updateUserService } from "../services/user.services"
+import { createUser as createUserService, refereshToken as refereshTokenService, getUser as getUserService, updateUser as updateUserService, deleteUser as deleteUserService } from "../services/user.services"
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const result = await createUserService(req.body)
@@ -84,6 +84,21 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     const user_id = req.user?.id;
     const body = req.body;
     const result = await updateUserService({ user_id: user_id, ...body })
+    if (result.status === 200) {
+        return res.status(result.status).json({
+            message: result.message
+        })
+    }
+
+    return res.status(result.status).json({
+        message: result.message
+    })
+}
+
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = req.user?.id;
+    const password = req.body.password;
+    const result = await deleteUserService({ user_id: user_id, password: password })
     if (result.status === 200) {
         return res.status(result.status).json({
             message: result.message
