@@ -29,7 +29,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 }
 
 export const refereshToken = async (req: Request, res: Response, next: NextFunction) => {
-    const user_id = req.user?.id;
+    const user_id = req.body.user_id;
     const refresh_token = req.cookies.refresh_token;
 
     if (!refresh_token) {

@@ -3,8 +3,8 @@ import { createTask as createTaskService, getTasks as getTasksService, updateTas
 
 export const createTask = async (req: Request, res: Response) => {
     const user_id = req.user?.id
-    const { title, description, deadline } = req.body
-    const result = await createTaskService({ user_id: user_id, title: title, description: description, deadline: deadline })
+    const { title, description, deadline, board_id, status } = req.body
+    const result = await createTaskService({ user_id: user_id, title: title, description: description, deadline: deadline, board_id: board_id, status: status })
     if (result.status === 200) {
         return res.status(result.status).json({
             message: result.message,
@@ -18,7 +18,8 @@ export const createTask = async (req: Request, res: Response) => {
 
 export const getTasks = async (req: Request, res: Response) => {
     const user_id = req.user?.id
-    const result = await getTasksService({ user_id: user_id })
+    const { board_id } = req.body
+    const result = await getTasksService({ user_id: user_id, board_id: board_id })
     if (result.status === 200) {
         return res.status(result.status).json({
             message: result.message,

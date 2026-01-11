@@ -6,6 +6,7 @@ const taskCreateValidation = z.object({
     description: z.string().max(1000, "Description must be at most 1000 characters long").optional(),
     deadline: z.iso.datetime(),
     status: z.enum(["Todo", "In Progress", "Completed"]),
+    board_id: z.string()
 })
 
 export type TaskCreateValidation = z.infer<typeof taskCreateValidation>;
