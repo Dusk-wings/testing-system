@@ -1,0 +1,1 @@
+export const onlineUserCount = new Map<string, number>();

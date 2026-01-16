@@ -19,7 +19,7 @@ export const getBoard = async (user_id: string) => {
 
 export const createBoard = async ({ user_id, title, visibility }: { user_id: string, title: string, visibility: string }) => {
     try {
-        await Board.create({ user_id, title, visibility })
+        await Board.create({ user_id: user_id, title: title, visibility: visibility })
         return {
             status: 201,
             message: "Board created successfully"
@@ -38,7 +38,7 @@ export const updateBoard = async ({ user_id, board_id, title, visibility }: { us
         const update: any = {}
         if (title) update.title = title
         if (visibility) update.visibility = visibility
-        update.updatedAt = new Date()
+        update.updated_at = new Date()
 
         await Board.updateOne({ _id: board_id, user_id: user_id }, { $set: update }, { runValidators: true })
         return {

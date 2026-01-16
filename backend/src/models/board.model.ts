@@ -9,12 +9,12 @@ const boardSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    createdAt: {
+    created_at: {
         type: Date,
         default: Date.now,
         required: true,
     },
-    updatedAt: {
+    updated_at: {
         type: Date,
         default: Date.now,
         required: true,
