@@ -2,11 +2,22 @@ import { accessTokenGenrator } from "@src/utils/accessTokenGenrator"
 import request from 'supertest'
 import app from "@src/index"
 import { deleteTask } from "@src/services/task.services"
+import userModel from "@src/models/user.model"
 
 jest.mock('@src/services/task.services', () => ({
     __esModule: true,
     deleteTask: jest.fn()
 }))
+
+jest.mock('@src/models/user.model', () => ({
+    __esModule: true,
+    default: {
+        findById: jest.fn()
+    }
+}))
+
+const userModelMocked = userModel as jest.Mocked<typeof userModel>
+
 
 const mockedDeleteTask = deleteTask as jest.Mock
 describe("DELETE /api/tasks", () => {
@@ -15,6 +26,13 @@ describe("DELETE /api/tasks", () => {
             status: 200,
             message: "Task deleted successfully"
         })
+
+        userModelMocked.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
+
         const [accessToken] = accessTokenGenrator("1")
 
         const response = await request(app).delete('/api/tasks').send({
@@ -37,6 +55,13 @@ describe("DELETE /api/tasks", () => {
             status: 404,
             message: "Task not found"
         })
+
+        userModelMocked.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
+
         const [accessToken] = accessTokenGenrator("1")
 
         const response = await request(app).delete('/api/tasks').send({

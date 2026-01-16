@@ -2,6 +2,7 @@ import { getTasks } from "@src/services/task.services"
 import request from 'supertest'
 import app from "@src/index"
 import { accessTokenGenrator } from "@src/utils/accessTokenGenrator"
+import userModel from "@src/models/user.model"
 
 jest.mock('@src/services/task.services', () => ({
     __esModule: true,
@@ -10,9 +11,25 @@ jest.mock('@src/services/task.services', () => ({
 
 const mockedGetTasks = getTasks as jest.Mock
 
+jest.mock('@src/models/user.model', () => ({
+    __esModule: true,
+    default: {
+        findById: jest.fn()
+    }
+}))
+
+const userModelMocked = userModel as jest.Mocked<typeof userModel>
+
+
 describe('GET /api/tasks', () => {
     it('should return 404 if board is not found', async () => {
         mockedGetTasks.mockResolvedValue({ status: 404, message: "Board not found" })
+
+        userModelMocked.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
 
         const [accessToken] = accessTokenGenrator("1")
 
@@ -32,6 +49,12 @@ describe('GET /api/tasks', () => {
 
     it('should return 403 if the board is private and user is not the creator of the board', async () => {
         mockedGetTasks.mockResolvedValue({ status: 403, message: "Forbidden" })
+
+        userModelMocked.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
 
         const [accessToken] = accessTokenGenrator("1")
 

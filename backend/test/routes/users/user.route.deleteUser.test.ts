@@ -14,6 +14,7 @@ jest.mock("@src/models/user.model", () => ({
     default: {
         findOne: jest.fn(),
         deleteOne: jest.fn(),
+        findById: jest.fn(),
     }
 }))
 
@@ -30,6 +31,11 @@ describe('DELETE api/user', () => {
         } as any);
         mockDeleteUser.mockResolvedValue({ status: 200, message: "User Deleted" } as any);
         // bcryptMocked.mockResolvedValue(true)
+        mockUserModel.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
 
         const [accessToken] = accessTokenGenrator("1")
 
@@ -52,6 +58,11 @@ describe('DELETE api/user', () => {
         } as any);
         mockDeleteUser.mockResolvedValue({ status: 401, message: "Invalid Password" } as any);
         // bcryptMocked.mockResolvedValue(false)
+        mockUserModel.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
 
         const [accessToken] = accessTokenGenrator("1")
 

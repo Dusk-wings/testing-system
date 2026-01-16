@@ -13,6 +13,7 @@ jest.mock('@src/models/user.model', () => ({
     default: {
         findOne: jest.fn(),
         updateOne: jest.fn(),
+        findById: jest.fn(),
     }
 }))
 
@@ -24,6 +25,11 @@ describe("PUT /api/user/", () => {
         mockUserModel.findOne.mockResolvedValue({ id: "1", name: "John Doe", email: "john.doe@example.com" } as any);
         mockUserModel.updateOne.mockResolvedValue({ name: "Richard Roe" } as any);
         mockUpdateUser.mockResolvedValue({ status: 200, message: "User Updated" } as any);
+        mockUserModel.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
 
         const [accessToken] = accessTokenGenrator("1");
         // console.log(accessToken)

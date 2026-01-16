@@ -2,6 +2,7 @@ import app from "@src/index";
 import { getUser } from "@src/services/user.services";
 import { accessTokenGenrator } from "@src/utils/accessTokenGenrator";
 import request from "supertest";
+import UserModel from "@src/models/user.model";
 
 jest.mock('@src/services/user.services', () => ({
     __esModule: true,
@@ -9,6 +10,15 @@ jest.mock('@src/services/user.services', () => ({
     refereshToken: jest.fn(),
     getUser: jest.fn(),
 }));
+
+jest.mock('@src/models/user.model', () => ({
+    __esModule: true,
+    default: {
+        findById: jest.fn()
+    }
+}))
+
+const mockUserModel = UserModel as jest.Mocked<typeof UserModel>;
 
 const mockGetUser = getUser as jest.Mock;
 
@@ -25,6 +35,11 @@ describe("GET api/users", () => {
             },
             message: "User Found"
         });
+        mockUserModel.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
 
         const [accessToken] = accessTokenGenrator("1");
 
@@ -44,6 +59,11 @@ describe("GET api/users", () => {
             status: 404,
             message: "User not found"
         });
+        mockUserModel.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
 
         const [accessToken] = accessTokenGenrator("1");
 

@@ -2,12 +2,22 @@ import { getBoard } from "@src/services/board.services"
 import request from "supertest"
 import app from '@src/index'
 import { accessTokenGenrator } from "@src/utils/accessTokenGenrator"
+import userModel from "@src/models/user.model"
 
 jest.mock("@src/services/board.services", () => ({
     getBoard: jest.fn()
 }))
 
 const getBoardMocked = getBoard as jest.Mock
+
+jest.mock('@src/models/user.model', () => ({
+    __esModule: true,
+    default: {
+        findById: jest.fn()
+    }
+}))
+
+const userModelMocked = userModel as jest.Mocked<typeof userModel>
 
 describe("GET api/boards", () => {
     it("should return all boards", async () => {
@@ -16,6 +26,12 @@ describe("GET api/boards", () => {
             message: "Boards fetched successfully",
             data: []
         })
+        userModelMocked.findById.mockResolvedValue({
+            _id: '1',
+            name: 'test',
+            email: 'test',
+        })
+
 
         const [accessToken] = accessTokenGenrator("1")
 
