@@ -9,37 +9,49 @@ export const handelBoardChatJoin = (
     data: { board_id: string }
 ) => {
     const { board_id } = data;
+    if (!board_id) {
+        socket.emit("error", { message: "Board ID is required" });
+        return;
+    }
     const user_id = socket.data.user_id;
     socket.data.board_id = board_id;
 
-    namespace.to(board_id).emit('user-joined-chat', { user_id });
     socket.join(board_id);
+    namespace.to(board_id).emit('user-joined-chat', { user: user_id });
 }
 
 export const handelBoardChatCommunication = async (
     namespace: Namespace,
     socket: Socket,
-    data: { board_id: string, message: string }
+    data: { message: string }
 ) => {
     const { message } = data;
-
-    const board_id = socket.data.board_id;
-    if (!board_id) return;
-
-    const users = boardUsersMap.get(board_id);
-    if (!users) return;
 
     const user_id = socket.data.user_id;
     if (!user_id) return;
 
-    const userName = await UserModel.findById(user_id, { name: 1 })
+    if (!message) {
+        socket.emit("error", { message: "Message is required" });
+        return;
+    }
+    const board_id = socket.data.board_id;
+    if (!board_id) return;
 
-    if (!users.has(user_id)) return;
 
-    const newMessage = new MessageModel({ user_id, message, board_id })
-    await newMessage.save()
+    const doesUserExist = boardUsersMap.get(board_id)?.has(user_id);
+    if (!doesUserExist) return;
 
-    socket.to(board_id).emit('board-message', { user_id, message, userName: userName?.name, createdAt: newMessage.created_at });
+    const userName = await UserModel.findById(user_id, { name: 1 });
+    if (!userName) return;
+
+    const newMessage = await MessageModel.create({ user_id: user_id, message: message, board_id: board_id })
+    namespace.to(board_id).emit('board-message', {
+        user_id: user_id,
+        message: message,
+        userName: userName?.name,
+        createdAt: newMessage.created_at,
+        message_id: newMessage._id
+    });
 }
 
 export const handelBoardChatLeave = (

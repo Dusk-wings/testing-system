@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { onlineUserCount } from "../../states/gloabal.onlineCount.state";
+import { onlineUserCount } from "../../states/global.onlineCount.state";
 
 export const countOnlinePresence = (socket: Socket) => {
     const user_id = socket.data.user_id;

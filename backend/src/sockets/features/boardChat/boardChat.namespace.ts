@@ -5,9 +5,11 @@ import {
     handelBoardChatCommunication,
     handelBoardChatLeave
 } from "./boardChat.handler";
+import { authSocketMiddleware } from "@src/sockets/middlewares/auth.socket.middleware";
 
 const boardChatNamespace = (io: Server) => {
     const namespace = io.of('/board-chat');
+    namespace.use(authSocketMiddleware)
     namespace.on('connection', (socket) => {
         socket.use((packet, next) => {
             validationMiddleware(socket, packet, next)

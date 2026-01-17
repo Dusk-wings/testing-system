@@ -6,8 +6,10 @@ import {
     getAllOnlinePresence
 } from "./online.handler";
 import validationMiddleware from "../../middlewares/user.validation.socket.middleware";
+import { authSocketMiddleware } from "../../middlewares/auth.socket.middleware";
 
 const onlineNameSpace = (io: Server) => {
+    io.use(authSocketMiddleware)
     io.on('connection', (socket) => {
         socket.use((packet, next) => {
             validationMiddleware(socket, packet, next);

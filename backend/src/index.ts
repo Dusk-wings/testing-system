@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 import initSocket from "./sockets";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
-import { authSocketMiddleware } from "./sockets/middlewares/auth.socket.middleware";
 
 const app = express();
 const server = createServer(app);
@@ -17,7 +16,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/api", router);
 
-io.of(/.*/).use(authSocketMiddleware)
 initSocket(io);
 
 
