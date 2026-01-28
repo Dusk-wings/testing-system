@@ -23,6 +23,20 @@ describe("Register Page", () => {
         )
 
         expect(screen.getByLabelText(/^name$/i)).toBeInTheDocument()
+        expect(screen.getByLabelText(/^email$/i)).toBeInTheDocument()
+        expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument()
+        expect(screen.getByLabelText(/^confirm password$/i)).toBeInTheDocument()
 
+    })
+
+    it("should render the register button and login link", () => {
+        render(
+            <MemoryRouter>
+                <RegisterPage />
+            </MemoryRouter>
+        )
+
+        expect(screen.getByRole('button', { name: "Register" })).toBeInTheDocument()
+        expect(screen.getByRole('link', { name: "Login" })).toBeInTheDocument()
     })
 })

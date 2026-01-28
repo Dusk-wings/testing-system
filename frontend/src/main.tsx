@@ -4,15 +4,20 @@ import "./index.css";
 import { RouterProvider } from "react-router";
 import { router } from "./router/router.ts";
 import Loader from "./components/ui/loader.tsx";
+import { ReactReduxContext } from "react-redux";
+import store from "./store/store.ts";
+
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Suspense fallback={
-      <div className="flex justify-center items-center h-screen">
-        <Loader />
-      </div>
-    }>
-      <RouterProvider router={router} />
-    </Suspense>
+    <ReactReduxContext store={store}>
+      <Suspense fallback={
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
+      }>
+        <RouterProvider router={router} />
+      </Suspense>
+    </ReactReduxContext>
   </StrictMode>
 );
