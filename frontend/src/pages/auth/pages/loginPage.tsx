@@ -46,7 +46,7 @@ function LoginPage() {
                             name="email"
                             render={({ field }) => (
                                 <Input
-                                    type="email"
+                                    type="text"
                                     id="email"
                                     placeholder='jhon@example.com'
                                     className='w-full'

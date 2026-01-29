@@ -1,8 +1,42 @@
 import { Request, Response, NextFunction } from "express";
-import { createUser as createUserService, refereshToken as refereshTokenService, getUser as getUserService, updateUser as updateUserService, deleteUser as deleteUserService } from "../services/user.services"
+import {
+    createUser as createUserService,
+    refereshToken as refereshTokenService,
+    getUser as getUserService,
+    updateUser as updateUserService,
+    deleteUser as deleteUserService,
+    loginUser as loginUserService
+} from "../services/user.services"
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const result = await createUserService(req.body)
+    if (result.status === 200) {
+        res.cookie('refresh_token', result.refresh_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 1000 * 60 * 60 * 24 * 4
+        })
+
+        res.cookie('access_token', result.access_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: result.access_token_expires_in
+        })
+
+        return res.status(result.status).json({
+            user_id: result.user_id,
+            message: result.message
+        })
+    }
+    return res.status(result.status).json({
+        message: result.message
+    })
+}
+
+export const loginUser = async (req: Request, res: Response) => {
+    const result = await loginUserService(req.body)
     if (result.status === 200) {
         res.cookie('refresh_token', result.refresh_token, {
             httpOnly: true,

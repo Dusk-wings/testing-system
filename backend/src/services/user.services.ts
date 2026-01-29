@@ -3,6 +3,7 @@ import RefereshTokenModel from "@src/models/refereshToken.model";
 import UserModel from "@src/models/user.model";
 import { accessTokenGenrator } from "@src/utils/accessTokenGenrator";
 import { refreshTokenGenrator } from "@src/utils/refereshTokenGenrator";
+import { UserLoginData } from "@src/validation/user.login.validation";
 import { UserDataType } from "@src/validation/user.validation"
 import bcrypt from "bcrypt"
 
@@ -37,6 +38,43 @@ export const createUser = async (data: UserDataType) => {
                 return { status: 500, message: "Internal Server Error" }
             }
 
+        } catch (error) {
+            console.log(error);
+            return { status: 500, message: "Internal Server Error" }
+        }
+    } catch (error) {
+        console.log(error);
+        return { status: 500, message: "Internal Server Error" }
+    }
+}
+
+export const loginUser = async (data: UserLoginData) => {
+    try {
+        const getUser = await UserModel.findOne({ email: data.email });
+        if (!getUser) {
+            return { status: 404, message: "Email is not registered" }
+        }
+        try {
+            const savedPassword = getUser.password;
+            const isPasswordCorrect = await bcrypt.compare(data.password, savedPassword);
+            if (!isPasswordCorrect) {
+                return { status: 401, message: "Invalid Password" }
+            }
+            const [accessToken, expiresIn] = accessTokenGenrator(getUser.id);
+            const refreshToken = refreshTokenGenrator();
+            try {
+                await RefereshTokenModel.updateOne(
+                    { user_id: getUser.id },
+                    {
+                        token: refreshToken,
+                        expires_at: new Date().getTime() + 1000 * 60 * 60 * 24 * 4
+                    }
+                )
+                return { status: 200, user_id: getUser.id, access_token: accessToken, refresh_token: refreshToken, message: "User Found", access_token_expires_in: expiresIn };
+            } catch (error) {
+                console.log(error);
+                return { status: 500, message: "Internal Server Error" }
+            }
         } catch (error) {
             console.log(error);
             return { status: 500, message: "Internal Server Error" }
