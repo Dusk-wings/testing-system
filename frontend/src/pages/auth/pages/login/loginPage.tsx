@@ -1,20 +1,22 @@
 import React from 'react'
-import { Card, CardBody, CardFooter, CardHeader } from '../../../components/ui/card'
-import Input from '../../../components/ui/input'
-import Label from '../../../components/ui/label'
-import Button from '../../../components/ui/button'
+import { Card, CardBody, CardFooter, CardHeader } from '../../../../components/ui/card'
+import Input from '../../../../components/ui/input'
+import Label from '../../../../components/ui/label'
+import Button from '../../../../components/ui/button'
 import { useForm } from 'react-hook-form'
 import { Controller } from 'react-hook-form'
-import { Link } from 'react-router'
-import type { LoginDataType } from '../../../lib/validation/login.validation'
+import { Link, useNavigate } from 'react-router'
+import type { LoginDataType } from '../../../../lib/validation/login.validation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import loginValidation from '../../../lib/validation/login.validation'
+import loginValidation from '../../../../lib/validation/login.validation'
+
 
 function LoginPage() {
     const {
         control,
         handleSubmit,
-        formState: { errors, isSubmitting }
+        formState: { errors, isSubmitting },
+        setError
     } = useForm<LoginDataType>(
         {
             resolver: zodResolver(loginValidation),
@@ -25,8 +27,35 @@ function LoginPage() {
         }
     )
 
-    const onSubmit = (data: LoginDataType) => {
-        console.log(data)
+    const navigator = useNavigate()
+
+    const onSubmit = async (data: LoginDataType) => {
+        try {
+            const PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000'
+            const response = await fetch(`${PATH}/api/users/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+
+            const result = await response.json()
+            if (response.ok) {
+                navigator('/dashboard', { replace: true })
+            } else {
+                setError('root', {
+                    type: 'manual',
+                    message: result.message
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            setError('root', {
+                type: 'manual',
+                message: 'Something went wrong'
+            })
+        }
     }
 
     const [showPassword, setShowPassword] = React.useState(false)
@@ -39,6 +68,7 @@ function LoginPage() {
             </CardHeader>
             <CardBody className='w-full'>
                 <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4 w-full' id='loginForm'>
+                    {errors.root && <p className='text-red-500 text-xs'>{errors.root.message}</p>}
                     <div className='flex flex-col gap-2 w-full'>
                         <Label htmlFor="email">Email</Label>
                         <Controller

@@ -1,14 +1,14 @@
 import React from "react";
-import { Card, CardBody, CardFooter, CardHeader } from "../../../components/ui/card";
-import Input from "../../../components/ui/input";
-import Label from "../../../components/ui/label";
+import { Card, CardBody, CardFooter, CardHeader } from "../../../../components/ui/card";
+import Input from "../../../../components/ui/input";
+import Label from "../../../../components/ui/label";
 import { useForm } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import type { RegisterDataType } from "../../../lib/validation/register.validation";
+import type { RegisterDataType } from "../../../../lib/validation/register.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import registerValidation from "../../../lib/validation/register.validation";
-import Button from "../../../components/ui/button";
-import Loader from "../../../components/ui/loader";
+import registerValidation from "../../../../lib/validation/register.validation";
+import Button from "../../../../components/ui/button";
+import Loader from "../../../../components/ui/loader";
 import { Link } from "react-router";
 
 function RegistrationPage() {

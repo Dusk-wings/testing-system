@@ -1,12 +1,13 @@
 import App from "../App.tsx";
 import { createBrowserRouter } from "react-router";
-import AuthLayout from "../pages/auth/authLayout.tsx";
-import LoginPage from "../pages/auth/pages/loginPage.tsx";
-import RegisterPage from "../pages/auth/pages/registrationPage.tsx";
+import AuthLayout from "../pages/auth/layout.tsx";
+import LoginPage from "../pages/auth/pages/login/loginPage.tsx";
+import RegisterPage from "../pages/auth/pages/register/registrationPage.tsx";
 import DashboardLayout from "../pages/dashboard/layout.tsx";
 import store from "../store/store.ts";
 import { loginUser } from "../store/slice/authSlice";
 import { redirect } from "react-router";
+import BoardPage from "../pages/dashboard/pages/board/board.tsx";
 
 const requireAuth = async () => {
     const state = store.getState();
@@ -43,12 +44,12 @@ export const routerInstance = [
         Component: AuthLayout,
         children: [
             {
-                path: 'auth/login',
+                path: '/auth/login',
                 index: true,
                 Component: LoginPage,
             },
             {
-                path: 'auth/register',
+                path: '/auth/register',
                 Component: RegisterPage,
             },
         ]
@@ -58,6 +59,15 @@ export const routerInstance = [
             return await requireAuth();
         },
         Component: DashboardLayout,
+        children: [{
+            index: true,
+            loader: () => redirect('board')
+        },
+        {
+            path: 'board',
+            Component: BoardPage,
+        },
+        ]
     }
 ]
 

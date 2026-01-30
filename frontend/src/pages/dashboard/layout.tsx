@@ -1,9 +1,8 @@
-import { Link, Outlet, useLoaderData } from "react-router";
+import { Link, Outlet } from "react-router";
 import Avatar from "../../components/ui/avatar";
+import { Suspense } from "react";
 
 const BoardLayout = () => {
-    const location = useLoaderData();
-    const pathName = location.pathname;
 
     return (
         <div className="flex flex-col h-screen">
@@ -11,7 +10,7 @@ const BoardLayout = () => {
                 <nav>
                     <ul>
                         <li>
-                            {pathName}
+                            {/* {pathName} */}
                         </li>
                         <li>
                             <Link to="/account">
@@ -25,7 +24,9 @@ const BoardLayout = () => {
                 </nav>
             </header>
             <div>
-                <Outlet />
+                <Suspense fallback={<div>Loading...</div>}>
+                    <Outlet />
+                </Suspense>
             </div>
         </div>
     )
