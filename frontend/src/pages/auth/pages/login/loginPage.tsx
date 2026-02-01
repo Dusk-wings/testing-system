@@ -84,7 +84,11 @@ function LoginPage() {
                                 />
                             )}
                         />
-                        {errors.email && <p className='text-red-500 text-xs'>{errors.email.message}</p>}
+                        {errors.email && (
+                            <p className='text-red-500 text-xs'>
+                                {errors.email.message}
+                            </p>
+                        )}
                     </div>
                     <div className='flex flex-col gap-2 w-full'>
                         <Label htmlFor="password">Password</Label>
@@ -101,7 +105,11 @@ function LoginPage() {
                                 />
                             )}
                         />
-                        {errors.password && <p className='text-red-500 text-xs'>{errors.password.message}</p>}
+                        {errors.password && (
+                            <p className='text-red-500 text-xs'>
+                                {errors.password.message}
+                            </p>
+                        )}
                         <div className='flex items-center gap-2 w-full'>
                             <Input
                                 type="checkbox"

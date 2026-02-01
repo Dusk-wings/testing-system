@@ -9,13 +9,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import registerValidation from "../../../../lib/validation/register.validation";
 import Button from "../../../../components/ui/button";
 import Loader from "../../../../components/ui/loader";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 function RegistrationPage() {
     const {
         control,
         handleSubmit,
-        formState: { errors, isSubmitting }
+        formState: { errors, isSubmitting },
+        setError
     } = useForm<RegisterDataType>(
         {
             resolver: zodResolver(registerValidation),
@@ -28,9 +29,29 @@ function RegistrationPage() {
         }
     )
     const [showPassword, setShowPassword] = React.useState(false);
+    const navigator = useNavigate();
 
-    const onSubmit = (data: RegisterDataType) => {
-        console.log(data);
+    const onSubmit = async (data: RegisterDataType) => {
+        try {
+            const SERVER_PATH = process.env.VITE_BACKEND_PATH;
+            const register = await fetch(`${SERVER_PATH}/api/users`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+            const response = await register.json();
+            if (!register.ok) {
+                setError('root', {
+                    type: 'manual',
+                    message: response.message
+                })
+            }
+            navigator('/dashboard', { replace: true })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -41,6 +62,11 @@ function RegistrationPage() {
             </CardHeader>
             <CardBody>
                 <form className='flex flex-col gap-4 ' id='registerForm' onSubmit={handleSubmit(onSubmit)}>
+                    {errors.root && (
+                        <p className="text-red-500 text-xs">
+                            {errors.root.message}
+                        </p>
+                    )}
                     <div className='flex flex-col gap-2 w-full'>
                         <Label htmlFor="name">Name</Label>
                         <Controller
@@ -56,7 +82,11 @@ function RegistrationPage() {
                                 />
                             )}
                         />
-                        {errors.name && <p className='text-red-500 text-xs'>{errors.name.message}</p>}
+                        {errors.name && (
+                            <p className='text-red-500 text-xs'>
+                                {errors.name.message}
+                            </p>
+                        )}
                     </div>
                     <div className='flex flex-col gap-2 w-full'>
                         <Label htmlFor="email">Email</Label>
@@ -73,7 +103,11 @@ function RegistrationPage() {
                                 />
                             )}
                         />
-                        {errors.email && <p className='text-red-500 text-xs'>{errors.email.message}</p>}
+                        {errors.email && (
+                            <p className='text-red-500 text-xs'>
+                                {errors.email.message}
+                            </p>
+                        )}
                     </div>
                     <div className='flex flex-col gap-2 w-full'>
                         <Label htmlFor="password">Password</Label>
@@ -90,7 +124,11 @@ function RegistrationPage() {
                                 />
                             )}
                         />
-                        {errors.password && <p className='text-red-500 text-xs'>{errors.password.message}</p>}
+                        {errors.password && (
+                            <p className='text-red-500 text-xs'>
+                                {errors.password.message}
+                            </p>
+                        )}
                     </div>
                     <div className='flex flex-col gap-2 w-full'>
                         <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -107,7 +145,11 @@ function RegistrationPage() {
                                 />
                             )}
                         />
-                        {errors.confirmPassword && <p className='text-red-500 text-xs'>{errors.confirmPassword.message}</p>}
+                        {errors.confirmPassword && (
+                            <p className='text-red-500 text-xs'>
+                                {errors.confirmPassword.message}
+                            </p>
+                        )}
                         <div className='flex items-center gap-2 w-full'>
                             <Input
                                 type="checkbox"

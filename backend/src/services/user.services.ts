@@ -12,7 +12,7 @@ export const createUser = async (data: UserDataType) => {
         const doesUserExist = await UserModel.findOne({ email: data.email })
 
         if (doesUserExist) {
-            return { status: 400, message: "User already exists" }
+            return { status: 400, message: "User already registered" }
         }
 
         const hashedPassword = await bcrypt.hash(data.password, parseInt(env.salt_round || "10"));
