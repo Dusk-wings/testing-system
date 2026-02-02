@@ -51,7 +51,7 @@ describe('Login Form Submission API', () => {
         fireEvent.change(passwordInput, { target: { value: 'password123!P' } })
         fireEvent.click(submitButton)
 
-        expect(await screen.findByText('BoardPage')).toBeInTheDocument();
+        expect(await screen.findByText('Boards')).toBeInTheDocument();
     })
 
     it('should show error message if user is not registered', async () => {

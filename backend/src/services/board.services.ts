@@ -17,9 +17,9 @@ export const getBoard = async (user_id: string) => {
     }
 }
 
-export const createBoard = async ({ user_id, title, visibility }: { user_id: string, title: string, visibility: string }) => {
+export const createBoard = async ({ user_id, title, description, visibility }: { user_id: string, title: string, description: string, visibility: string }) => {
     try {
-        await Board.create({ user_id: user_id, title: title, visibility: visibility })
+        await Board.create({ user_id: user_id, title: title, description: description, visibility: visibility })
         return {
             status: 201,
             message: "Board created successfully"
@@ -33,11 +33,12 @@ export const createBoard = async ({ user_id, title, visibility }: { user_id: str
     }
 }
 
-export const updateBoard = async ({ user_id, board_id, title, visibility }: { user_id: string, board_id: string, title?: string, visibility?: string }) => {
+export const updateBoard = async ({ user_id, board_id, title, visibility, description }: { user_id: string, board_id: string, title?: string, visibility?: string, description?: string }) => {
     try {
         const update: any = {}
         if (title) update.title = title
         if (visibility) update.visibility = visibility
+        if (description) update.description = description
         update.updated_at = new Date()
 
         await Board.updateOne({ _id: board_id, user_id: user_id }, { $set: update }, { runValidators: true })

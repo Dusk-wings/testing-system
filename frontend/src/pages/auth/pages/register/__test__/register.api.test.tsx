@@ -59,7 +59,7 @@ describe("Register API", () => {
         fireEvent.change(confirmPasswordInput, { target: { value: PASSWORD } })
         fireEvent.click(submitButton)
 
-        expect(await screen.findByText('BoardPage')).toBeInTheDocument();
+        expect(await screen.findByText('Boards')).toBeInTheDocument();
     })
 
     it("Should show error message if user is already registered", async () => {

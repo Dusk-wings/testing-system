@@ -16,3 +16,17 @@ it('renders login page at /auth/login', async () => {
         await screen.findByRole('heading', { name: /login/i })
     ).toBeInTheDocument()
 })
+
+it('renders register page at /auth/register', async () => {
+    const router = createMemoryRouter(authRouter, {
+        initialEntries: ['/auth/register']
+    })
+
+    render(
+        <RouterProvider router={router} />
+    )
+
+    expect(
+        await screen.findByRole('heading', { name: /create an account/i })
+    ).toBeInTheDocument()
+})

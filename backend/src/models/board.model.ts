@@ -9,6 +9,10 @@ const boardSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    description: {
+        type: String,
+        required: false
+    },
     created_at: {
         type: Date,
         default: Date.now,
