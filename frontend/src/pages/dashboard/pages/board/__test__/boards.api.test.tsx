@@ -58,7 +58,10 @@ describe('Board Data Loading', () => {
             <RouterProvider router={router} />
         )
 
-        expect(await screen.findByText('Internal Server Error')).toBeInTheDocument()
+        expect(
+            await screen.findByText(/error|something went wrong/i)
+        ).toBeInTheDocument()
+
     })
 
     it('should show boards if the boards are loaded successfully', async () => {

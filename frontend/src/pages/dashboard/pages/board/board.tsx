@@ -63,9 +63,19 @@ function BoardPage() {
                 aria-label="Boards"
             >
                 {loading ? (
-                    <p className="text-center text-gray-500">Loading...</p>
+                    <section
+                        className="flex justify-center items-center h-dvh w-full"
+                        aria-label="Loading"
+                    >
+                        <p className="text-center text-gray-500">Loading...</p>
+                    </section>
                 ) : error ? (
-                    <p className="text-center text-red-500">{error.message}</p>
+                    <section
+                        className="flex justify-center items-center h-dvh w-full"
+                        aria-label="Error"
+                    >
+                        <p className="text-center text-red-500">{error.message}</p>
+                    </section>
                 ) : (
                     boardData?.length === 0 ? (
                         <p className="text-center text-gray-500">No boards found, start by creating a board</p>
