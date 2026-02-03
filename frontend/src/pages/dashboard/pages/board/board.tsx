@@ -23,8 +23,8 @@ function BoardPage() {
     const fetchBoardData = async () => {
         setLoading(true)
         try {
-            const SERVER_PATH = process.env.VITE_BACKEND_PATH
-            const response = await fetch(`${SERVER_PATH}/api/v1/board`, {
+            const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH
+            const response = await fetch(`${SERVER_PATH}/api/boards`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -32,7 +32,7 @@ function BoardPage() {
                 credentials: "include"
             })
             const data = await response.json()
-            if (data.status === 200) {
+            if (response.status === 200) {
                 setBoardData(data.data)
             } else {
                 setError({
@@ -57,15 +57,18 @@ function BoardPage() {
 
     return (
         <div>
-            <h1>Boards</h1>
-            <div className={`${loading || error ? "justify-center items-center flex h-dvh w-full" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-dvh w-full"}`}>
+            <h1 className="text-2xl font-bold">Boards</h1>
+            <section
+                className={`${loading || error ? "justify-center items-center flex h-dvh w-full" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-dvh w-full"}`}
+                aria-label="Boards"
+            >
                 {loading ? (
-                    <p>Loading...</p>
+                    <p className="text-center text-gray-500">Loading...</p>
                 ) : error ? (
-                    <p>{error.message}</p>
+                    <p className="text-center text-red-500">{error.message}</p>
                 ) : (
                     boardData?.length === 0 ? (
-                        <p>No boards found</p>
+                        <p className="text-center text-gray-500">No boards found, start by creating a board</p>
                     ) : (
                         boardData?.map((board) => (
                             <ContentCard
@@ -78,7 +81,7 @@ function BoardPage() {
                             />
                         )))
                 )}
-            </div>
+            </section>
         </div>
     );
 }
