@@ -1,4 +1,6 @@
 import Board from "@src/models/board.model"
+import List from "@src/models/list.model"
+import Card from "@src/models/card.model"
 
 export const getBoard = async (user_id: string) => {
     try {
@@ -68,6 +70,55 @@ export const deleteBoard = async (data: { user_id: string, board_id: string }) =
         return {
             status: 200,
             message: "Board deleted successfully"
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            status: 500,
+            message: "Internal Server Error"
+        }
+    }
+}
+
+export const getBoardById = async (data: { user_id: string, board_id: string }) => {
+    try {
+        if (!data.board_id || !data.user_id) {
+            return {
+                status: 400,
+                message: "Invalid request"
+            }
+        }
+        const board = await Board.findOne({
+            _id: data.board_id,
+            $or: [
+                { user_id: data.user_id },
+                { visibility: "public" }
+            ]
+        })
+
+        if (!board) {
+            return {
+                status: 404,
+                message: "Board not found"
+            }
+        }
+        const lists = await List.find({ board_id: data.board_id })
+        const cards = await Card.find({ list_id: { $in: lists.map((list: any) => list._id) } })
+
+        const content = {
+            ...board,
+            lists: lists.map((list: any) => {
+                return {
+                    ...list,
+                    cards: cards.filter((card: any) => card.list_id.toString() === list._id.toString())
+                }
+            })
+        }
+
+        return {
+            status: 200,
+            message: "Board fetched successfully",
+            data: content
         }
     } catch (error) {
         console.log(error)

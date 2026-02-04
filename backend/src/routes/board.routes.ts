@@ -1,4 +1,10 @@
-import { getBoard, createBoard, updateBoard, deleteBoard } from "@src/controllers/board.controller";
+import {
+    getBoard,
+    createBoard,
+    updateBoard,
+    deleteBoard,
+    getBoardById
+} from "@src/controllers/board.controller";
 import { Router } from "express";
 import { authMiddleware } from "@src/middlewares/auth.middleware";
 import { boardValidator } from "@src/validation/board.create.validation";
@@ -10,5 +16,6 @@ router.get("/", authMiddleware, getBoard)
 router.post("/", authMiddleware, boardValidator, createBoard)
 router.put("/", authMiddleware, boardUpdateValidator, updateBoard)
 router.delete("/", authMiddleware, deleteBoard)
+router.get("/:id", authMiddleware, getBoardById)
 
 export default router
