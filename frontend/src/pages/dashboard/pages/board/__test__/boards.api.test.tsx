@@ -5,6 +5,22 @@ import { routerInstance } from '../../../../../router/router'
 import { render, screen, within } from '@testing-library/react'
 
 const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH
+export const BOARD_DATA_RESPONSE = [{
+    _id: '1',
+    title: 'Board 1',
+    description: 'Description 1',
+    visibility: 'public',
+    created_at: '2022-01-01T00:00:00.000Z',
+    updated_at: '2022-01-01T00:00:00.000Z'
+},
+{
+    _id: '2',
+    title: 'Board 2',
+    description: 'Description 2',
+    visibility: 'public',
+    created_at: '2022-01-01T00:00:00.000Z',
+    updated_at: '2022-01-01T00:00:00.000Z'
+}]
 
 describe('Board Data Loading', () => {
     beforeEach(() => {
@@ -68,22 +84,8 @@ describe('Board Data Loading', () => {
         server.use(
             http.get(`${SERVER_PATH}/api/boards`, () => {
                 return HttpResponse.json({
-                    message: 'success', data: [{
-                        _id: '1',
-                        title: 'Board 1',
-                        description: 'Description 1',
-                        visibility: 'public',
-                        created_at: '2022-01-01T00:00:00.000Z',
-                        updated_at: '2022-01-01T00:00:00.000Z'
-                    },
-                    {
-                        _id: '2',
-                        title: 'Board 2',
-                        description: 'Description 2',
-                        visibility: 'public',
-                        created_at: '2022-01-01T00:00:00.000Z',
-                        updated_at: '2022-01-01T00:00:00.000Z'
-                    }]
+                    message: 'success',
+                    data: BOARD_DATA_RESPONSE
                 }, { status: 200 })
             })
         )

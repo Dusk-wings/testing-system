@@ -1,8 +1,9 @@
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 import { createMemoryRouter, RouterProvider } from "react-router"
 import { routerInstance } from "../../../../../router/router"
 import { server } from "../../../../../test/server"
 import { delay, http, HttpResponse } from "msw"
+import { BOARD_DATA_RESPONSE } from "./boards.api.test"
 
 const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH
 
@@ -55,5 +56,41 @@ describe('Board Page', () => {
         expect(await screen.findByRole('region', { name: 'Loading' })).toBeInTheDocument()
 
         expect(await screen.findByRole('region', { name: 'Boards' })).toBeInTheDocument()
+    })
+
+    it('Should navigate to the particular board page when any board link is clicked', async () => {
+        server.use(
+            http.get(`${SERVER_PATH}/api/boards`, () => {
+                return HttpResponse.json({ message: 'success', data: BOARD_DATA_RESPONSE }, { status: 200 })
+            })
+        )
+
+        server.use(
+            http.get(`${SERVER_PATH}/api/boards/1`, () => {
+                return HttpResponse.json({
+                    message: "Board fetched successfully",
+                    data: {
+                        _id: 1,
+                        title: 'Board Title',
+                        lists: [],
+                    }
+                }, { status: 200 })
+            })
+        )
+
+        const router = createMemoryRouter(routerInstance, {
+            initialEntries: ['/dashboard/board']
+        })
+
+        render(
+            <RouterProvider router={router} />
+        )
+
+        const boardSection = await screen.findByRole('region', { name: 'Boards' })
+        const boardLinks = await within(boardSection).findAllByRole('link')
+
+        fireEvent.click(boardLinks[0])
+
+        expect(await screen.findByText('Board Title')).toBeInTheDocument()
     })
 })
