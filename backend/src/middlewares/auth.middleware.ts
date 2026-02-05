@@ -5,6 +5,7 @@ import UserModel from "@src/models/user.model";
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const COOKIES = req.cookies
+    // console.log(COOKIES)
     if (!COOKIES) {
         return res.status(401).json({
             message: "Unauthorized"

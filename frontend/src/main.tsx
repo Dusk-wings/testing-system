@@ -4,13 +4,13 @@ import "./index.css";
 import { RouterProvider } from "react-router";
 import { router } from "./router/router.ts";
 import Loader from "./components/ui/loader.tsx";
-import { ReactReduxContext } from "react-redux";
+import { Provider } from "react-redux";
 import store from "./store/store.ts";
 
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ReactReduxContext store={store}>
+    <Provider store={store}>
       <Suspense fallback={
         <div className="flex justify-center items-center h-screen">
           <Loader />
@@ -18,6 +18,6 @@ createRoot(document.getElementById("root")!).render(
       }>
         <RouterProvider router={router} />
       </Suspense>
-    </ReactReduxContext>
+    </Provider>
   </StrictMode>
 );

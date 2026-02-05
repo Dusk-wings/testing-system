@@ -8,6 +8,8 @@ import { Server } from "socket.io";
 import cors from "cors";
 
 const app = express();
+app.use(cookieParser());
+app.use(express.json());
 app.use(cors({
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -26,8 +28,6 @@ const io = new Server(server, {
 
 connectToDB();
 
-app.use(express.json());
-app.use(cookieParser());
 app.use("/api", router);
 
 initSocket(io);

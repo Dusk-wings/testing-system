@@ -12,10 +12,11 @@ import BoardContentPage from "../pages/dashboard/pages/content/page.tsx";
 
 const requireAuth = async () => {
     const state = store.getState();
+    console.log('Store State : ', state.auth);
     if (!state.auth.isAuth) {
         await store.dispatch(loginUser());
     }
-
+    console.log('Store State : ', state.auth);
     if (!store.getState().auth.isAuth) {
         return redirect("/auth/login");
     }

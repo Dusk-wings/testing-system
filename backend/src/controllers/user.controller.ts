@@ -13,14 +13,14 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     if (result.status === 200) {
         res.cookie('refresh_token', result.refresh_token, {
             httpOnly: true,
-            secure: true,
+            // secure: true,
             sameSite: 'strict',
             maxAge: 1000 * 60 * 60 * 24 * 4
         })
 
         res.cookie('access_token', result.access_token, {
             httpOnly: true,
-            secure: true,
+            // secure: true,
             sameSite: 'strict',
             maxAge: result.access_token_expires_in
         })
@@ -36,18 +36,20 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 }
 
 export const loginUser = async (req: Request, res: Response) => {
+    // console.log('Request : ', req.body);
     const result = await loginUserService(req.body)
     if (result.status === 200) {
+        // console.log('Req Success sending cookeis')
         res.cookie('refresh_token', result.refresh_token, {
             httpOnly: true,
-            secure: true,
+            // secure: true,
             sameSite: 'strict',
             maxAge: 1000 * 60 * 60 * 24 * 4
         })
 
         res.cookie('access_token', result.access_token, {
             httpOnly: true,
-            secure: true,
+            // secure: true,
             sameSite: 'strict',
             maxAge: result.access_token_expires_in
         })
@@ -76,14 +78,14 @@ export const refereshToken = async (req: Request, res: Response, next: NextFunct
     if (result.status === 200) {
         res.cookie('refresh_token', result.refresh_token, {
             httpOnly: true,
-            secure: true,
+            // secure: true,
             sameSite: 'strict',
             maxAge: 1000 * 60 * 60 * 24 * 4
         })
 
         res.cookie('access_token', result.access_token, {
             httpOnly: true,
-            secure: true,
+            // secure: true,
             sameSite: 'strict',
             maxAge: result.access_token_expires_in
         })

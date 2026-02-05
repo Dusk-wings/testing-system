@@ -33,7 +33,7 @@ export const loginUser = createAsyncThunk<
     { rejectValue: AuthError }
 >('auth/loginUser', async (_, { rejectWithValue }) => {
     try {
-        const SERVER_PATH = process.env.VITE_BACKEND_PATH;
+        const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
         const checkAuth = await fetch(`${SERVER_PATH}/api/users`, {
             credentials: "include",
             method: "GET",

@@ -33,7 +33,7 @@ function RegistrationPage() {
 
     const onSubmit = async (data: RegisterDataType) => {
         try {
-            const SERVER_PATH = process.env.VITE_BACKEND_PATH;
+            const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
             const register = await fetch(`${SERVER_PATH}/api/users`, {
                 method: "POST",
                 headers: {
@@ -50,7 +50,11 @@ function RegistrationPage() {
             }
             navigator('/dashboard', { replace: true })
         } catch (error) {
-            console.log(error)
+            console.error(error);
+            setError('root', {
+                type: 'manual',
+                message: 'Something went wrong'
+            })
         }
     }
 
@@ -61,7 +65,10 @@ function RegistrationPage() {
                 <p className='text-sm text-zinc-500'>Enter your information to create an account</p>
             </CardHeader>
             <CardBody>
-                <form className='flex flex-col gap-4 ' id='registerForm' onSubmit={handleSubmit(onSubmit)}>
+                <form
+                    className='flex flex-col gap-4 ' id='registerForm'
+                    onSubmit={handleSubmit(onSubmit)}
+                >
                     {errors.root && (
                         <p className="text-red-500 text-xs">
                             {errors.root.message}
