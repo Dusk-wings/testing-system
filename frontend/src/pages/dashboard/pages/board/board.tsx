@@ -57,19 +57,19 @@ function BoardPage() {
     <div>
       <h1 className="text-2xl font-bold">Boards</h1>
       <section
-        className={`${loading || error ? "justify-center items-center flex h-dvh w-full" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-dvh w-full"}`}
+        className={`${loading || error || boardData?.length === 0 ? "justify-center items-center flex h-96 w-full" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-dvh w-full"}`}
         aria-label="Boards"
       >
         {loading ? (
           <section
-            className="flex justify-center items-center h-dvh w-full"
+            className="flex justify-center items-center w-full"
             aria-label="Loading"
           >
             <p className="text-center text-gray-500">Loading...</p>
           </section>
         ) : error ? (
           <section
-            className="flex justify-center items-center h-dvh w-full"
+            className="flex justify-center items-center  w-full"
             aria-label="Error"
           >
             <p className="text-center text-red-500">{error.message}</p>

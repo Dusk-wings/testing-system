@@ -56,7 +56,9 @@ export const loginUser = async (data: UserLoginData) => {
         }
         try {
             const savedPassword = getUser.password;
+            console.log(savedPassword);
             const isPasswordCorrect = await bcrypt.compare(data.password, savedPassword);
+            console.log(isPasswordCorrect);
             if (!isPasswordCorrect) {
                 return { status: 401, message: "Invalid Password" }
             }

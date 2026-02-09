@@ -1,6 +1,8 @@
 import { Link, Outlet } from "react-router";
 import Avatar from "../../components/ui/avatar";
 import { Suspense } from "react";
+import logo from '../../../public/vite.svg'
+import Button from "../../components/ui/button";
 
 const BoardLayout = () => {
 
@@ -8,26 +10,29 @@ const BoardLayout = () => {
         <div className="flex flex-col h-screen">
             <header>
                 <nav>
-                    <ul>
-                        <li>
-                            {/* {pathName} */}
+                    <ul className="flex justify-between items-center p-2 border-b border-gray-200">
+                        <li className="border-r px-4 border-gray-200">
+                            <img src={logo} className="w-10 h-10" alt="logo" />
                         </li>
-                        <li>
-                            <Link to="/account">
-                                <Avatar
-                                    src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
-                                    alt=""
-                                />
-                            </Link>
+                        <li className="px-4 border-l border-gray-200">
+                            <div className="flex gap-4">
+                                <Link to="/account">
+                                    <Avatar
+                                        src=""
+                                        alt=""
+                                    />
+                                </Link>
+                                <Button variant="danger">Logout</Button>
+                            </div>
                         </li>
                     </ul>
                 </nav>
             </header>
-            <div>
+            <main className="pt-4 px-11">
                 <Suspense fallback={<div>Loading...</div>}>
                     <Outlet />
                 </Suspense>
-            </div>
+            </main>
         </div>
     )
 }
