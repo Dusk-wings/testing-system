@@ -3,10 +3,12 @@ import mongoose from "mongoose";
 const taskSchema = new mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
     board_id: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Board",
         required: true
     },
     title: {
@@ -18,6 +20,11 @@ const taskSchema = new mongoose.Schema({
     },
     deadline: {
         type: Date,
+        required: true
+    },
+    list_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "List",
         required: true
     },
     status: {
@@ -35,6 +42,10 @@ const taskSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
         required: true,
+    },
+    position: {
+        type: Number,
+        required: true
     }
 })
 
