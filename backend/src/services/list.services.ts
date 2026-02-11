@@ -1,18 +1,18 @@
 import Board from "@src/models/board.model"
 import List from "@src/models/list.model"
 
-export const createList = async ({ title, boardId, user_id }: { title: string, boardId: string, user_id: string }) => {
+export const createList = async ({ title, board_id, user_id }: { title: string, board_id: string, user_id: string }) => {
     try {
-        const doesUserOwnsTheBoard = await Board.findOne({ _id: boardId, user: user_id });
+        const doesUserOwnsTheBoard = await Board.findOne({ _id: board_id, user: user_id });
         if (!doesUserOwnsTheBoard) {
             return { status: 403, message: "You don't own this board" };
         }
 
         try {
-            const numberOfList = await List.countDocuments({ board_id: boardId });
+            const numberOfList = await List.countDocuments({ board_id: board_id });
 
             const newList = await List.create({
-                board_id: boardId,
+                board_id: board_id,
                 title: title,
                 position: numberOfList + 1,
                 created_at: Date.now(),
@@ -32,7 +32,19 @@ export const createList = async ({ title, boardId, user_id }: { title: string, b
     }
 }
 
-export const updateList = async ({ title, listId, user_id, position }: { title?: string, listId: string, user_id: string, position?: number }) => {
+export const updateList = async ({
+    title,
+    list_id,
+    user_id,
+    position,
+    board_id
+}: {
+    title?: string,
+    list_id: string,
+    user_id: string,
+    position?: number,
+    board_id: string
+}) => {
 
     const dataToUpdate: any = {
         updated_at: Date.now(),
@@ -43,31 +55,31 @@ export const updateList = async ({ title, listId, user_id, position }: { title?:
 
 
     try {
-        const list = await List.findOne({ _id: listId, user_id: user_id })
+        const list = await List.findOne({ _id: list_id, user_id: user_id })
         if (!list) {
             return { status: 404, message: "List not found" };
         }
         if (position) {
-            if (position < dataToUpdate.position) {
+            if (position > list.position) {
                 await List.updateMany(
                     {
-                        board_id: listId,
+                        board_id: board_id,
                         position: {
-                            $gt: position,
-                            $lte: dataToUpdate.position
+                            $gte: list.position,
+                            $lte: position
                         }
                     },
                     {
                         $inc: { position: -1 }
                     }
                 )
-            } else if (position > dataToUpdate.position) {
+            } else if (position < list.position) {
                 await List.updateMany(
                     {
-                        board_id: listId,
+                        board_id: board_id,
                         position: {
-                            $lt: position,
-                            $gte: dataToUpdate.position
+                            $lte: list.position,
+                            $gte: position
                         }
                     },
                     {
@@ -76,7 +88,7 @@ export const updateList = async ({ title, listId, user_id, position }: { title?:
                 )
             }
         }
-        const updatedList = await List.findOneAndUpdate({ _id: listId, user_id: user_id }, { $set: dataToUpdate }, { runValidators: true });
+        const updatedList = await List.findOneAndUpdate({ _id: list_id, user_id: user_id }, { $set: dataToUpdate }, { runValidators: true });
 
         if (!updatedList) {
             return { status: 404, message: "List not found" };
@@ -89,9 +101,9 @@ export const updateList = async ({ title, listId, user_id, position }: { title?:
 
 }
 
-export const deleteList = async ({ listId, user_id }: { listId: string, user_id: string }) => {
+export const deleteList = async ({ list_id, user_id }: { list_id: string, user_id: string }) => {
     try {
-        const deletedList = await List.findOneAndDelete({ _id: listId, user_id: user_id });
+        const deletedList = await List.findOneAndDelete({ _id: list_id, user_id: user_id });
         if (!deletedList) {
             return { status: 404, message: "List not found" };
         }

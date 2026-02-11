@@ -3,23 +3,55 @@ import Board from "@src/models/board.model"
 import List from "@src/models/list.model"
 import mongoose from "mongoose"
 
-export const createTask = async (data: { user_id: string, title: string, description: string, deadline: string, board_id: string, status: string, list_id: string }) => {
+export const createTask = async (data: {
+    user_id: string,
+    title: string,
+    description: string,
+    deadline: string,
+    board_id: string,
+    status: string,
+    list_id: string
+}) => {
     try {
-        if (!data.user_id || !data.title || !data.deadline || !data.board_id || !data.status || !data.list_id) {
-            return { status: 400, message: "All fields are required" }
+        if (!data.user_id ||
+            !data.title ||
+            !data.deadline ||
+            !data.board_id ||
+            !data.status ||
+            !data.list_id
+        ) {
+            return {
+                status: 400,
+                message: "All fields are required"
+            }
         }
 
-        const board = await Board.findOne({ user_id: data.user_id, _id: data.board_id })
+        const board = await Board.findOne({
+            user_id: data.user_id,
+            _id: data.board_id
+        })
         if (!board) {
-            return { status: 404, message: "Board not found" }
+            return {
+                status: 404,
+                message: "Board not found"
+            }
         }
 
-        const list = await List.findOne({ _id: data.list_id, board_id: data.board_id })
+        const list = await List.findOne({
+            _id: data.list_id,
+            board_id: data.board_id
+        })
         if (!list) {
-            return { status: 404, message: "List not found" }
+            return {
+                status: 404,
+                message: "List not found"
+            }
         }
 
-        const numberOfTask = await Task.countDocuments({ board_id: data.board_id, list_id: data.list_id })
+        const numberOfTask = await Task.countDocuments({
+            board_id: data.board_id,
+            list_id: data.list_id
+        })
 
         try {
             await Task.create({

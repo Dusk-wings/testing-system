@@ -70,7 +70,7 @@ describe("User Service", () => {
         })
 
         expect(response).toEqual({
-            message: "User already exists",
+            message: "User already registered",
             status: 400
         });
     });
