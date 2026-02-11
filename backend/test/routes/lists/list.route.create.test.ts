@@ -1,4 +1,4 @@
-import { createList } from "@src/controllers/list.controller";
+import { createList } from "@src/services/list.services";
 import User from "@src/models/user.model";
 import { accessTokenGenrator } from "@src/utils/accessTokenGenrator";
 import request from "supertest";
@@ -9,6 +9,11 @@ jest.mock('@src/models/user.model', () => ({
     default: {
         findById: jest.fn()
     }
+}))
+
+jest.mock('@src/services/list.services', () => ({
+    __esModule: true,
+    createList: jest.fn()
 }))
 
 const mockedUser = User as jest.Mocked<typeof User>;
@@ -29,13 +34,13 @@ describe("POST /api/lists", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).post("/api/lists").send({
+        const response = await request(app).post("/api/lists/create").send({
             title: "List 1",
             board_id: "1",
         }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
 
-        expect(response.status).toBe(200);
         expect(response.body.message).toBe("List created successfully");
+        expect(response.status).toBe(200);
         expect(mockCreateList).toHaveBeenCalledWith({
             user_id: "1",
             title: "List 1",
@@ -57,7 +62,7 @@ describe("POST /api/lists", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).post("/api/lists").send({
+        const response = await request(app).post("/api/lists/create").send({
             title: "List 1",
             board_id: "1",
         }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
@@ -69,5 +74,24 @@ describe("POST /api/lists", () => {
             title: "List 1",
             board_id: "1",
         })
+    })
+
+    it("should return 400 if the data provided is not correct", async () => {
+        mockedUser.findById.mockResolvedValue({
+            _id: "1",
+            name: "test",
+            email: "test",
+        })
+
+        const [accessToken] = accessTokenGenrator("1");
+
+        const response = await request(app).post("/api/lists/create").send({
+            title: "",
+            board_id: "1",
+        }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe("Invalid data");
+
     })
 })

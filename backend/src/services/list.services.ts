@@ -88,7 +88,11 @@ export const updateList = async ({
                 )
             }
         }
-        const updatedList = await List.findOneAndUpdate({ _id: list_id, user_id: user_id }, { $set: dataToUpdate }, { runValidators: true });
+        const updatedList = await List.findOneAndUpdate(
+            { _id: list_id, user_id: user_id },
+            { $set: dataToUpdate },
+            { runValidators: true }
+        );
 
         if (!updatedList) {
             return { status: 404, message: "List not found" };
@@ -103,7 +107,9 @@ export const updateList = async ({
 
 export const deleteList = async ({ list_id, user_id }: { list_id: string, user_id: string }) => {
     try {
-        const deletedList = await List.findOneAndDelete({ _id: list_id, user_id: user_id });
+        const deletedList = await List.findOneAndDelete(
+            { _id: list_id, user_id: user_id }
+        );
         if (!deletedList) {
             return { status: 404, message: "List not found" };
         }

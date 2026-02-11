@@ -12,6 +12,7 @@ export const createList = async (req: Request, res: Response) => {
         const list = await createListService({ user_id, board_id, title })
         res.status(list.status).json({
             message: list.message,
+            data: list.data
         })
     } catch (error) {
         console.log(error)
@@ -28,6 +29,7 @@ export const updateList = async (req: Request, res: Response) => {
         const list = await updateListService({ user_id, list_id: listId, board_id: boardId, ...body })
         res.status(list.status).json({
             message: list.message,
+            data: list.data
         })
     } catch (error) {
         console.log(error)
@@ -44,6 +46,7 @@ export const deleteList = async (req: Request, res: Response) => {
         const list = await deleteListService({ user_id, list_id })
         res.status(list.status).json({
             message: list.message,
+            data: list.data
         })
     } catch (error) {
         console.log(error)

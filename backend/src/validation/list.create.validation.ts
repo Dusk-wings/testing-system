@@ -3,15 +3,15 @@ import { z } from "zod";
 
 export const listCreator = z.object({
     title: z.string().min(1, "Title is required"),
-    boardId: z.string().min(1, "Board ID is required"),
+    board_id: z.string().min(1, "Board ID is required"),
 })
 
 export type listCreationType = z.infer<typeof listCreator>
 
 export const listValidator = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { title, boardId } = req.body
-        const validated = listCreator.safeParse({ title, boardId })
+        const { title, board_id } = req.body
+        const validated = listCreator.safeParse({ title, board_id })
         if (!validated.success) {
             return res.status(400).json({
                 message: "Invalid data",
