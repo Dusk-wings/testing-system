@@ -1,5 +1,9 @@
 import React from "react";
 import ContentCard from "../../../../components/ui/contentCard";
+import Button from "../../../../components/ui/button";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../../../store/store";
+import { OpenFor, setOpen } from "../../../../store/slice/hoverWindowSlice";
 
 interface BoardData {
   _id: string;
@@ -53,9 +57,23 @@ function BoardPage() {
     fetchBoardData();
   }, []);
 
+  const dispatcher = useDispatch<AppDispatch>();
+
   return (
     <div>
-      <h1 className="text-2xl font-bold">Boards</h1>
+      <div>
+        <h1 className="text-2xl font-bold">Boards</h1>
+        <Button variant="primary" onClick={() => {
+          dispatcher(setOpen({
+            open: true,
+            heading: "Create Board",
+            headingDescription: "Create a new board",
+            type: OpenFor.BOARD_CREATION,
+          }));
+        }}>
+          Create
+        </Button>
+      </div>
       <section
         className={`${loading || error || boardData?.length === 0 ? "justify-center items-center flex h-96 w-full" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-dvh w-full"}`}
         aria-label="Boards"
