@@ -39,6 +39,7 @@ function RegistrationPage() {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify(data),
             })
             const response = await register.json();
