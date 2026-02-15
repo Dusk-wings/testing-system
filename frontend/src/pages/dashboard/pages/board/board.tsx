@@ -22,7 +22,7 @@ function BoardPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Boards</h1>
+        <h1 className="text-2xl font-bold dark:text-white">Boards</h1>
         <Button variant="primary" onClick={() => {
           dispatcher(setOpen({
             open: true,

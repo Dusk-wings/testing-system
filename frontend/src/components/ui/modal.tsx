@@ -29,7 +29,7 @@ function Modal({
     }, [open]);
 
     return (
-        <dialog ref={dialogRef} className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2 rounded-xl font-mono">
+        <dialog ref={dialogRef} className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2 rounded-xl font-mono dark:bg-zinc-800 dark:text-white">
             <section>
                 <h1 className="text-xl font-semibold">{heading}</h1>
                 <p className="text-xs">{headingDescription}</p>

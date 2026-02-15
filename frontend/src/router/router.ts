@@ -26,8 +26,15 @@ const requireAuth = async () => {
 
 const redirectIfAuth = async () => {
     const state = store.getState();
+    console.log('Store State : ', state.auth);
     if (state.auth.isAuth) {
         return redirect("/dashboard");
+    } else {
+        await store.dispatch(loginUser());
+        const state = store.getState();
+        if (state.auth.isAuth) {
+            return redirect('/dashboard')
+        }
     }
     return null;
 };
