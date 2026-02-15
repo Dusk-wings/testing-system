@@ -21,10 +21,16 @@ export const getBoard = async (user_id: string) => {
 
 export const createBoard = async ({ user_id, title, description, visibility }: { user_id: string, title: string, description: string, visibility: string }) => {
     try {
-        await Board.create({ user_id: user_id, title: title, description: description, visibility: visibility })
+        const data = await Board.create({
+            user_id: user_id,
+            title: title,
+            description: description,
+            visibility: visibility
+        })
         return {
             status: 201,
-            message: "Board created successfully"
+            message: "Board created successfully",
+            data: data
         }
     } catch (error) {
         console.log(error)

@@ -56,7 +56,6 @@ export const loginUser = async (data: UserLoginData) => {
         }
         try {
             const savedPassword = getUser.password;
-            console.log(savedPassword);
             const isPasswordCorrect = await bcrypt.compare(data.password, savedPassword);
             console.log(isPasswordCorrect);
             if (!isPasswordCorrect) {
@@ -68,9 +67,12 @@ export const loginUser = async (data: UserLoginData) => {
                 await RefereshTokenModel.updateOne(
                     { user_id: getUser.id },
                     {
-                        token: refreshToken,
-                        expires_at: new Date().getTime() + 1000 * 60 * 60 * 24 * 4
-                    }
+                        $set: {
+                            token: refreshToken,
+                            expires_at: new Date().getTime() + 1000 * 60 * 60 * 24 * 4
+                        }
+                    },
+                    { upsert: true }
                 )
                 return { status: 200, user_id: getUser.id, access_token: accessToken, refresh_token: refreshToken, message: "User Found", access_token_expires_in: expiresIn };
             } catch (error) {
@@ -87,28 +89,29 @@ export const loginUser = async (data: UserLoginData) => {
     }
 }
 
-export const refereshToken = async (user_id: string, refresh_token: string) => {
+export const refereshToken = async (refresh_token: string) => {
     try {
-        const doesUserExist = await UserModel.findOne({ _id: user_id })
+        // const doesUserExist = await UserModel.findOne({ _id: user_id })
 
-        if (!doesUserExist) {
-            return { status: 404, message: "User not found" }
-        }
+        // if (!doesUserExist) {
+        //     return { status: 404, message: "User not found" }
+        // }
 
-        const doesTokenExist = await RefereshTokenModel.findOne({ user_id: user_id, token: refresh_token })
-
+        const doesTokenExist = await RefereshTokenModel.findOne({ token: refresh_token })
+        console.log("Token in db", doesTokenExist)
         if (!doesTokenExist) {
             return { status: 404, message: "Token not found" }
         }
         if (doesTokenExist.expires_at < Date.now()) {
             return { status: 404, message: "Token expired" }
         }
-        const [accessToken, expiresIn] = accessTokenGenrator(user_id);
+        const [accessToken, expiresIn] = accessTokenGenrator(doesTokenExist.user_id);
         const newRefreshToken = refreshTokenGenrator();
 
         try {
-            await RefereshTokenModel.updateOne({ user_id: user_id, token: refresh_token }, { token: newRefreshToken, expires_at: Date.now() + 1000 * 60 * 60 * 24 * 4 })
-            return { status: 200, user_id: user_id, access_token: accessToken, refresh_token: newRefreshToken, message: "Token Issued Again", access_token_expires_in: expiresIn };
+            await RefereshTokenModel.updateOne({ token: refresh_token }, { token: newRefreshToken, expires_at: Date.now() + 1000 * 60 * 60 * 24 * 4 })
+            const user = await getUser({ user_id: doesTokenExist.user_id })
+            return { status: 200, user_id: doesTokenExist.user_id, user, access_token: accessToken, refresh_token: newRefreshToken, message: "Token Issued Again", access_token_expires_in: expiresIn };
         } catch (error) {
             console.log(error);
             return { status: 500, message: "Internal Server Error" }

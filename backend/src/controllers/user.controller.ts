@@ -65,8 +65,9 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 export const refereshToken = async (req: Request, res: Response, next: NextFunction) => {
-    const user_id = req.body.user_id;
+    // const user_id = req.body.user_id;
     const refresh_token = req.cookies.refresh_token;
+    console.log(refresh_token)
 
     if (!refresh_token) {
         return res.status(400).json({
@@ -74,7 +75,7 @@ export const refereshToken = async (req: Request, res: Response, next: NextFunct
         })
     }
 
-    const result = await refereshTokenService(user_id, refresh_token)
+    const result = await refereshTokenService(refresh_token)
     if (result.status === 200) {
         res.cookie('refresh_token', result.refresh_token, {
             httpOnly: true,
@@ -92,7 +93,8 @@ export const refereshToken = async (req: Request, res: Response, next: NextFunct
 
         return res.status(result.status).json({
             user_id: result.user_id,
-            message: result.message
+            message: result.message,
+            user: result.user
         })
     }
 

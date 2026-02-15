@@ -45,6 +45,23 @@ export const loginUser = createAsyncThunk<
             const data = await checkAuth.json();
             return data.user;
         }
+        console.log(checkAuth.status)
+        if (checkAuth.status == 401) {
+            const refreshToken = await fetch(`${SERVER_PATH}/api/users/refresh-token`, {
+                credentials: "include",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            console.log('Refresh : ', refreshToken.status)
+            const data = await refreshToken.json();
+            console.log('Message : ', data.message)
+
+            if (refreshToken.ok) {
+                return data.user;
+            }
+        }
         return rejectWithValue({
             status: checkAuth.status,
             error: checkAuth.statusText,

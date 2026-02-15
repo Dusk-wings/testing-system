@@ -19,7 +19,7 @@ const router = Router();
 router.get('/', authMiddleware, getUser);
 router.post('/', userValidation, createUser);
 router.post('/login', validateLoginSchema, loginUser);
-router.post('/refresh-token', refereshTokenValidation, refereshToken);
+router.post('/refresh-token', refereshToken);
 router.put('/', authMiddleware, updateUserValidationMiddleware, updateUser);
 router.delete('/', authMiddleware, deleteUserValidationMiddleware, deleteUser);
 

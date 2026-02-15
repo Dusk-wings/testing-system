@@ -8,7 +8,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 function Card({ children, className, ...props }: Props) {
     return (
         <div {...props}
-            className={`p-4 inner-shadow shadow-md dark:shadow-gray-800 dark:bg-gray-800 bg-white dark:text-white dark:border-gray-700/50 border border-gray-300/50 rounded-lg transition-all duration-300  ${className}`}>
+            className={`p-4 inner-shadow shadow-md dark:shadow-gray-800 dark:bg-zinc-800 bg-white dark:text-white dark:border-gray-700/50 border border-gray-300/50 rounded-lg transition-all duration-300  ${className}`}>
             {children}
         </div>
     )

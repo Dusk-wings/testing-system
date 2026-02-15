@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "./button";
 
 interface Props {
     open: boolean;
@@ -28,14 +29,15 @@ function Modal({
     }, [open]);
 
     return (
-        <dialog ref={dialogRef}>
+        <dialog ref={dialogRef} className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2 rounded-xl font-mono">
             <section>
-                <h1>{heading}</h1>
-                <p>{headingDescription}</p>
+                <h1 className="text-xl font-semibold">{heading}</h1>
+                <p className="text-xs">{headingDescription}</p>
             </section>
             <div>{children}</div>
-            <footer>
-                <button onClick={() => onOpenChange(false)}>Close</button>
+            <footer className="w-full flex md:flex-row flex-col gap-2">
+                <Button className="grow" variant="danger" onClick={() => onOpenChange(false)}>Close</Button>
+                <Button form="form" className="grow" type="submit" >Done</Button>
             </footer>
         </dialog>
     )

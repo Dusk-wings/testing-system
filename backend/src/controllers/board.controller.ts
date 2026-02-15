@@ -30,6 +30,7 @@ export const createBoard = async (req: Request, res: Response) => {
         const board = await createBoardService({ user_id, title, visibility, description })
         res.status(board.status).json({
             message: board.message,
+            data: board.data
         })
     } catch (error) {
         console.log(error)
