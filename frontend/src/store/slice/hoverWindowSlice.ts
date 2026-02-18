@@ -7,6 +7,10 @@ export const OpenFor = {
     TASK_CREATION: 'TASK_CREATION',
     TASK_UPDATION: 'TASK_UPDATION',
     TASK_DELETION: 'TASK_DELETION',
+    CARD_CREATION: 'CARD_CREATION',
+    CARD_UPDATION: 'CARD_UPDATION',
+    CARD_DELETION: 'CARD_DELETION',
+    ERROR: "ERROR"
 } as const;
 
 export type OpenFor = keyof typeof OpenFor | null;

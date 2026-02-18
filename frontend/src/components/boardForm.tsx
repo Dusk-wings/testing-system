@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../store/store";
 import { addBoard } from "../store/slice/boardSlice";
 import { closeHoverWindow } from "../store/slice/hoverWindowSlice";
+import ModalFooter from "./ui/modalFooter";
 
 function BoardForm() {
     const {
@@ -102,6 +103,11 @@ function BoardForm() {
                     {errors.visibility && <p className="text-sm text-red-600">{errors.visibility.message}</p>}
                 </div>
             </form>
+            <ModalFooter
+                onClose={() => dispatcher(closeHoverWindow())}
+                submitText="Create Board"
+                submitVariant="primary"
+            />
         </div>
     )
 }

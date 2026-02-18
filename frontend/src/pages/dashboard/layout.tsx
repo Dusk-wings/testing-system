@@ -3,16 +3,14 @@ import Avatar from "../../components/ui/avatar";
 import { Suspense } from "react";
 // import logo from '../../../public/vite.svg'
 import Button from "../../components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import Dialog from "../../components/ui/modal";
-import type { AppDispatch } from "../../store/store";
-import { closeHoverWindow, OpenFor } from "../../store/slice/hoverWindowSlice";
+import { OpenFor } from "../../store/slice/hoverWindowSlice";
 import BoardForm from "../../components/boardForm";
 
 const BoardLayout = () => {
     const dialogState = useSelector((state: RootState) => state.hoverWindow);
-    const reduxDispatcher = useDispatch<AppDispatch>();
 
     return (
         <div className="flex flex-col h-screen">
@@ -40,7 +38,6 @@ const BoardLayout = () => {
                 {dialogState.open && (
                     <Dialog
                         open={dialogState.open}
-                        onOpenChange={() => reduxDispatcher(closeHoverWindow())}
                         heading={dialogState.heading}
                         headingDescription={dialogState.headingDescription}
                         children={
