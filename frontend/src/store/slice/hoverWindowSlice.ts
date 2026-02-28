@@ -21,6 +21,7 @@ interface InitialState {
     heading: string;
     headingDescription: string;
     type: OpenFor;
+    data?: Record<string, unknown> | null;
 }
 
 const initialState: InitialState = {
@@ -28,6 +29,7 @@ const initialState: InitialState = {
     heading: "",
     headingDescription: "",
     type: null,
+    data: null,
 };
 
 const hoverWindowSlice = createSlice({
@@ -39,12 +41,14 @@ const hoverWindowSlice = createSlice({
             state.heading = action.payload.heading;
             state.headingDescription = action.payload.headingDescription;
             state.type = action.payload.type;
+            state.data = action.payload.data;
         },
         closeHoverWindow: (state) => {
             state.open = false;
             state.heading = "";
             state.headingDescription = "";
             state.type = null;
+            state.data = null;
         },
     },
 });

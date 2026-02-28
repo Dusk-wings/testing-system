@@ -4,6 +4,8 @@ import { routerInstance } from "../../../../../router/router"
 import { server } from "../../../../../test/server"
 import { delay, http, HttpResponse } from "msw"
 import { BOARD_DATA_RESPONSE } from "./boards.api.test"
+import { Provider } from "react-redux"
+import store from "../../../../../store/store"
 
 const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH
 
@@ -31,7 +33,9 @@ describe('Board Page', () => {
         })
 
         render(
-            <RouterProvider router={router} />
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
         )
 
         expect(await screen.findByText('Boards')).toBeInTheDocument()
@@ -50,7 +54,9 @@ describe('Board Page', () => {
         })
 
         render(
-            <RouterProvider router={router} />
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
         )
 
         expect(await screen.findByRole('region', { name: 'Loading' })).toBeInTheDocument()
@@ -61,9 +67,27 @@ describe('Board Page', () => {
     it('Should navigate to the particular board page when any board link is clicked', async () => {
         server.use(
             http.get(`${SERVER_PATH}/api/boards`, () => {
-                return HttpResponse.json({ message: 'success', data: BOARD_DATA_RESPONSE }, { status: 200 })
+                return HttpResponse.json({
+                    message: 'success',
+                    data: BOARD_DATA_RESPONSE
+                }, { status: 200 })
             })
         )
+
+        const router = createMemoryRouter(routerInstance, {
+            initialEntries: ['/dashboard/board']
+        })
+
+        render(
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
+        )
+
+        const boardSection = await screen.findByRole('region', { name: 'Boards' })
+        const boardLinks = await within(boardSection).findAllByRole('link')
+
+        fireEvent.click(boardLinks[0])
 
         server.use(
             http.get(`${SERVER_PATH}/api/boards/1`, () => {
@@ -77,19 +101,6 @@ describe('Board Page', () => {
                 }, { status: 200 })
             })
         )
-
-        const router = createMemoryRouter(routerInstance, {
-            initialEntries: ['/dashboard/board']
-        })
-
-        render(
-            <RouterProvider router={router} />
-        )
-
-        const boardSection = await screen.findByRole('region', { name: 'Boards' })
-        const boardLinks = await within(boardSection).findAllByRole('link')
-
-        fireEvent.click(boardLinks[0])
 
         expect(await screen.findByText('Board Title')).toBeInTheDocument()
     })

@@ -5,6 +5,8 @@ import { createMemoryRouter, RouterProvider } from "react-router"
 import { routerInstance } from "../../../../../router/router"
 import store from "../../../../../store/store"
 import { logOut } from "../../../../../store/slice/authSlice"
+import { Provider } from "react-redux"
+
 
 const EMAIL_ADDRESS = 'jhon.doe.test@email.com'
 
@@ -20,6 +22,25 @@ describe('Login Form Submission API', () => {
             })
         )
 
+
+        const router = createMemoryRouter(routerInstance, {
+            initialEntries: ['/auth/login']
+        })
+
+        render(
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
+        )
+
+        const emailInput = await screen.findByLabelText(/email/i)
+        const passwordInput = await screen.findByLabelText(/^password$/i)
+        const submitButton = await screen.findByRole('button', { name: /login/i })
+
+        fireEvent.change(emailInput, { target: { value: EMAIL_ADDRESS } })
+        fireEvent.change(passwordInput, { target: { value: 'password123!P' } })
+        fireEvent.click(submitButton)
+
         server.use(
             http.get('http://localhost:3000/api/users', () => {
                 return HttpResponse.json({
@@ -34,22 +55,6 @@ describe('Login Form Submission API', () => {
                 }, { status: 200 })
             })
         )
-
-        const router = createMemoryRouter(routerInstance, {
-            initialEntries: ['/auth/login']
-        })
-
-        render(
-            <RouterProvider router={router} />
-        )
-
-        const emailInput = await screen.findByLabelText(/email/i)
-        const passwordInput = await screen.findByLabelText(/^password$/i)
-        const submitButton = await screen.findByRole('button', { name: /login/i })
-
-        fireEvent.change(emailInput, { target: { value: EMAIL_ADDRESS } })
-        fireEvent.change(passwordInput, { target: { value: 'password123!P' } })
-        fireEvent.click(submitButton)
 
         expect(await screen.findByText('Boards')).toBeInTheDocument();
     })

@@ -8,6 +8,7 @@ import type { RootState } from "../../store/store";
 import Dialog from "../../components/ui/modal";
 import { OpenFor } from "../../store/slice/hoverWindowSlice";
 import BoardForm from "../../components/boardForm";
+import DeleteContent from "../../components/deleteContent";
 
 const BoardLayout = () => {
     const dialogState = useSelector((state: RootState) => state.hoverWindow);
@@ -41,7 +42,7 @@ const BoardLayout = () => {
                         heading={dialogState.heading}
                         headingDescription={dialogState.headingDescription}
                         children={
-                            dialogState.type === OpenFor.BOARD_CREATION ? <BoardForm /> : null
+                            dialogState.type === OpenFor.BOARD_CREATION ? <BoardForm /> : dialogState.type === OpenFor.CARD_DELETION || dialogState.type === OpenFor.BOARD_DELETION ? <DeleteContent /> : null
                         }
                     />
                 )}

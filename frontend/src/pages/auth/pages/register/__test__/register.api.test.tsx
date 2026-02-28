@@ -5,6 +5,7 @@ import { routerInstance } from "../../../../../router/router";
 import { render, screen, fireEvent } from "@testing-library/react";
 import store from "../../../../../store/store";
 import { logOut } from "../../../../../store/slice/authSlice";
+import { Provider } from "react-redux";
 
 
 const SERVER_PATH = process.env.VITE_BACKEND_PATH;
@@ -20,9 +21,34 @@ describe("Register API", () => {
     it("Should register a new user", async () => {
         server.use(
             http.post(`${SERVER_PATH}/api/users`, () => {
-                return HttpResponse.json({ message: 'User Registered' }, { status: 201 })
+                return HttpResponse.json(
+                    { message: 'User Registered' },
+                    { status: 201 }
+                )
             })
         )
+
+        const router = createMemoryRouter(routerInstance, {
+            initialEntries: ['/auth/register']
+        })
+
+        render(
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
+        )
+
+        const nameInput = await screen.findByLabelText(/^name$/i)
+        const emailInput = await screen.findByLabelText(/email/i)
+        const passwordInput = await screen.findByLabelText(/^password$/i)
+        const confirmPasswordInput = await screen.findByLabelText(/^confirm/i)
+        const submitButton = await screen.findByRole('button', { name: /Register/i })
+
+        fireEvent.change(nameInput, { target: { value: NAME } })
+        fireEvent.change(emailInput, { target: { value: EMAIL_ADDRESS } })
+        fireEvent.change(passwordInput, { target: { value: PASSWORD } })
+        fireEvent.change(confirmPasswordInput, { target: { value: PASSWORD } })
+        fireEvent.click(submitButton)
 
         server.use(
             http.get(`${SERVER_PATH}/api/users`, () => {
@@ -38,26 +64,6 @@ describe("Register API", () => {
                 }, { status: 200 })
             })
         )
-
-        const router = createMemoryRouter(routerInstance, {
-            initialEntries: ['/auth/register']
-        })
-
-        render(
-            <RouterProvider router={router} />
-        )
-
-        const nameInput = await screen.findByLabelText(/^name$/i)
-        const emailInput = await screen.findByLabelText(/email/i)
-        const passwordInput = await screen.findByLabelText(/^password$/i)
-        const confirmPasswordInput = await screen.findByLabelText(/^confirm/i)
-        const submitButton = await screen.findByRole('button', { name: /Register/i })
-
-        fireEvent.change(nameInput, { target: { value: NAME } })
-        fireEvent.change(emailInput, { target: { value: EMAIL_ADDRESS } })
-        fireEvent.change(passwordInput, { target: { value: PASSWORD } })
-        fireEvent.change(confirmPasswordInput, { target: { value: PASSWORD } })
-        fireEvent.click(submitButton)
 
         expect(await screen.findByText('Boards')).toBeInTheDocument();
     })

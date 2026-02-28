@@ -58,11 +58,12 @@ const boardSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(getBoardData.fulfilled, (state, action) => {
-            state.boards = action.payload;
-            state.loading = false;
-            state.error = null;
-        })
+        builder
+            .addCase(getBoardData.fulfilled, (state, action) => {
+                state.boards = action.payload;
+                state.loading = false;
+                state.error = null;
+            })
             .addCase(getBoardData.pending, (state) => {
                 state.loading = true;
             })

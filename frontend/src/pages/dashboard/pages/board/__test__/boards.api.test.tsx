@@ -1,8 +1,10 @@
 import { server } from '../../../../../test/server'
-import { http, HttpResponse } from 'msw'
+import { delay, http, HttpResponse } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { routerInstance } from '../../../../../router/router'
 import { render, screen, within } from '@testing-library/react'
+import { Provider } from 'react-redux'
+import store from '../../../../../store/store'
 
 const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH
 export const BOARD_DATA_RESPONSE = [{
@@ -44,7 +46,11 @@ describe('Board Data Loading', () => {
 
         server.use(
             http.get(`${SERVER_PATH}/api/boards`, () => {
-                return HttpResponse.json({ message: 'success', data: [] }, { status: 200 })
+                return HttpResponse.json(
+                    {
+                        message: 'success',
+                        data: []
+                    }, { status: 200 })
             })
         )
 
@@ -53,16 +59,26 @@ describe('Board Data Loading', () => {
         })
 
         render(
-            <RouterProvider router={router} />
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
         )
 
-        expect(await screen.findByText('No boards found, start by creating a board')).toBeInTheDocument()
+        const boardRegion = await screen.findByRole('region', { name: 'Boards' })
+
+        expect(
+            await within(boardRegion).findByText("No boards found, start by creating a board")
+        ).toBeInTheDocument()
     })
 
     it('should show error message if internal server error occurs', async () => {
         server.use(
             http.get(`${SERVER_PATH}/api/boards`, () => {
-                return HttpResponse.json({ message: 'Internal Server Error', data: [] }, { status: 500 })
+                return HttpResponse.json(
+                    {
+                        message: 'Internal Server Error',
+                        data: []
+                    }, { status: 500 })
             })
         )
 
@@ -71,7 +87,9 @@ describe('Board Data Loading', () => {
         })
 
         render(
-            <RouterProvider router={router} />
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
         )
 
         expect(
@@ -95,7 +113,9 @@ describe('Board Data Loading', () => {
         })
 
         render(
-            <RouterProvider router={router} />
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
         )
 
         const boardSection = await screen.findByRole('region', { name: 'Boards' })
@@ -106,5 +126,30 @@ describe('Board Data Loading', () => {
         expect(boardLinks[0]).toHaveAttribute('href', '/dashboard/board/1')
         expect(boardLinks[1]).toHaveTextContent('Board 2')
         expect(boardLinks[1]).toHaveAttribute('href', '/dashboard/board/2')
+    })
+
+    it('Should show the board loading while the data is being fetched', async () => {
+        server.use(
+            http.get(`${SERVER_PATH}/api/boards`, async () => {
+                await delay(1000);
+
+                return HttpResponse.json({
+                    message: 'success',
+                    data: BOARD_DATA_RESPONSE
+                }, { status: 200 })
+            })
+        )
+
+        const router = createMemoryRouter(routerInstance, {
+            initialEntries: ['/dashboard/board']
+        })
+
+        render(
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
+        )
+
+        expect(await screen.findByText('Loading...')).toBeInTheDocument()
     })
 })
