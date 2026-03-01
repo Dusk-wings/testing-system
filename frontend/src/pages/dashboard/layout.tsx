@@ -42,7 +42,13 @@ const BoardLayout = () => {
                         heading={dialogState.heading}
                         headingDescription={dialogState.headingDescription}
                         children={
-                            dialogState.type === OpenFor.BOARD_CREATION ? <BoardForm /> : dialogState.type === OpenFor.CARD_DELETION || dialogState.type === OpenFor.BOARD_DELETION ? <DeleteContent /> : null
+                            dialogState.type === OpenFor.BOARD_CREATION ||
+                                dialogState.type === OpenFor.BOARD_UPDATION ?
+                                <BoardForm /> :
+                                dialogState.type === OpenFor.CARD_DELETION ||
+                                    dialogState.type === OpenFor.BOARD_DELETION ?
+                                    <DeleteContent /> :
+                                    null
                         }
                     />
                 )}

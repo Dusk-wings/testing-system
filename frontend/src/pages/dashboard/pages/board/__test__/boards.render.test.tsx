@@ -85,7 +85,7 @@ describe('Board Page', () => {
         )
 
         const boardSection = await screen.findByRole('region', { name: 'Boards' })
-        const boardLinks = await within(boardSection).findAllByRole('link')
+        const boardLinks = await within(boardSection).findAllByRole('button', { name: 'Open' })
 
         fireEvent.click(boardLinks[0])
 

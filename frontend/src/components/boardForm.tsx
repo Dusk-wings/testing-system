@@ -4,16 +4,25 @@ import Label from "./ui/label";
 import Input from "./ui/input";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../store/store";
-import { addBoard } from "../store/slice/boardSlice";
+import { addBoard, updateBoard } from "../store/slice/boardSlice";
 import { closeHoverWindow } from "../store/slice/hoverWindowSlice";
 import ModalFooter from "./ui/modalFooter";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
+import React from "react";
 
 function BoardForm() {
+    const hoverWindow = useSelector((state: RootState) => state.hoverWindow);
+    const boardData = useSelector((state: RootState) => state.board.boards);
+
+    const [currentBoardData, setCurrentBoardData] = React.useState<BoardCreator | null>(null);
+
     const {
         control,
         handleSubmit,
         formState: { errors },
-        setError
+        setError,
+        reset
     } = useForm<BoardCreator>({
         defaultValues: {
             title: "",
@@ -22,31 +31,89 @@ function BoardForm() {
         }
     });
 
+    React.useEffect(() => {
+        if (hoverWindow.type == 'BOARD_UPDATION') {
+            if (boardData.length > 0) {
+                const board = boardData.find((board) => board._id === hoverWindow.data?.id);
+                if (board) {
+                    setCurrentBoardData(board);
+                    reset({
+                        title: board.title,
+                        description: board.description,
+                        visibility: board.visibility,
+                    });
+                }
+            }
+        }
+    }, [hoverWindow, boardData])
+
     const dispatcher = useDispatch<AppDispatch>()
 
     const onSubmit = async (formData: BoardCreator) => {
         try {
             const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
-            const response = await fetch(`${SERVER_PATH}/api/boards`, {
-                method: "POST",
+            const URL = '/api/boards';
+
+            const dataToSend: any = {
+                board_id: hoverWindow.data?.id,
+            }
+
+            if (hoverWindow.type == 'BOARD_UPDATION') {
+                if (
+                    formData.title == currentBoardData?.title
+                    && formData.description == currentBoardData?.description
+                    && formData.visibility == currentBoardData?.visibility
+                ) {
+                    dispatcher(closeHoverWindow());
+                    return;
+                }
+
+                if (formData.title != currentBoardData?.title) {
+                    dataToSend.title = formData.title;
+                }
+                if (formData.description != currentBoardData?.description) {
+                    dataToSend.description = formData.description;
+                }
+                if (formData.visibility != currentBoardData?.visibility) {
+                    dataToSend.visibility = formData.visibility;
+                }
+            }
+
+            const response = await fetch(`${SERVER_PATH}${URL}`, {
+                method: hoverWindow.type == 'BOARD_CREATION'
+                    ? "POST"
+                    : "PUT",
                 credentials: "include",
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(
+                    hoverWindow.type == 'BOARD_CREATION' ? formData : dataToSend
+                )
             })
             const data = await response.json();
             if (!response.ok) {
                 setError("root", data.message);
             } else {
-                dispatcher(addBoard({
-                    _id: data.data._id,
-                    title: data.data.title,
-                    description: data.data.description,
-                    visibility: data.data.visibility,
-                    created_at: data.data.created_at,
-                    updated_at: data.data.updated_at,
-                }));
+                if (hoverWindow.type == 'BOARD_CREATION') {
+                    dispatcher(addBoard({
+                        _id: data.data._id,
+                        title: data.data.title,
+                        description: data.data.description,
+                        visibility: data.data.visibility,
+                        created_at: data.data.created_at,
+                        updated_at: data.data.updated_at,
+                    }));
+                } else {
+                    dispatcher(updateBoard({
+                        _id: data.data._id,
+                        title: formData.title,
+                        description: formData.description,
+                        visibility: formData.visibility,
+                        created_at: data.data.created_at,
+                        updated_at: data.data.updated_at,
+                    }));
+                }
                 dispatcher(closeHoverWindow());
             }
         } catch (error) {
@@ -83,29 +150,50 @@ function BoardForm() {
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="visibility">Visibility</Label>
                     <div className="flex  gap-1">
-                        <div className="flex gap-2 items-center">
-                            <Controller
-                                control={control}
-                                name="visibility"
-                                render={({ field }) => <Input type="radio" {...field} value="Public" id="visibility-public" />}
-                            />
-                            <Label htmlFor="visibility-public">Public</Label>
-                        </div>
-                        <div className="flex gap-2 items-center">
-                            <Controller
-                                control={control}
-                                name="visibility"
-                                render={({ field }) => <Input type="radio" {...field} value="Private" id="visibility-private" />}
-                            />
-                            <Label htmlFor="visibility-private">Private</Label>
-                        </div>
+                        <Controller
+                            control={control}
+                            name="visibility"
+                            render={({ field }) => (
+                                <>
+                                    <div className="flex gap-2 items-center">
+                                        <Input
+                                            type="radio"
+                                            checked={field.value === "Public"}
+                                            {...field}
+                                            value="Public"
+                                            id="visibility-public"
+                                        />
+
+                                        <Label
+                                            htmlFor="visibility-public"
+                                        >
+                                            Public
+                                        </Label>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Input
+                                            type="radio"
+                                            checked={field.value === "Private"}
+                                            {...field}
+                                            value="Private"
+                                            id="visibility-private"
+                                        />
+                                        <Label
+                                            htmlFor="visibility-private"
+                                        >
+                                            Private
+                                        </Label>
+                                    </div>
+                                </>
+                            )}
+                        />
                     </div>
                     {errors.visibility && <p className="text-sm text-red-600">{errors.visibility.message}</p>}
                 </div>
             </form>
             <ModalFooter
                 onClose={() => dispatcher(closeHoverWindow())}
-                submitText="Create Board"
+                submitText={hoverWindow.type == 'BOARD_CREATION' ? "Create Board" : "Update Board"}
                 submitVariant="primary"
             />
         </div>

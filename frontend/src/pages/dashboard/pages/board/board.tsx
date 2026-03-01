@@ -20,7 +20,7 @@ function BoardPage() {
   const boardData = useSelector((state: RootState) => state.board.boards);
 
   return (
-    <div>
+    <div className="flex flex-col gap-2 md:gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold dark:text-white">Boards</h1>
         <Button variant="primary" onClick={() => {
@@ -35,7 +35,7 @@ function BoardPage() {
         </Button>
       </div>
       <section
-        className={`${loading || error || boardData?.length === 0 ? "justify-center items-center flex h-96 w-full" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-dvh w-full"}`}
+        className={`${loading || error || boardData?.length === 0 ? "justify-center items-center flex h-96 w-full" : "flex flex-col md:grid md:grid-cols-2 md:place-items-stretch lg:grid-cols-3 gap-2 md:gap-4 w-full"}`}
         aria-label="Boards"
       >
         {loading ? (
@@ -60,6 +60,7 @@ function BoardPage() {
           boardData?.map((board) => (
             <ContentCard
               key={board._id}
+              id={board._id}
               to={`/dashboard/board/${board._id}`}
               contentHeading={board.title}
               contentDescription={board.description}

@@ -49,10 +49,26 @@ export const updateBoard = async ({ user_id, board_id, title, visibility, descri
         if (description) update.description = description
         update.updated_at = new Date()
 
-        await Board.updateOne({ _id: board_id, user_id: user_id }, { $set: update }, { runValidators: true })
+        const board = await Board.findOneAndUpdate(
+            { _id: board_id, user_id: user_id },
+            { $set: update },
+            { runValidators: true, new: true }
+        )
+
+        if (!board) {
+            return {
+                status: 404,
+                message: "Board not found"
+            }
+        }
         return {
             status: 200,
-            message: "Board updated successfully"
+            message: "Board updated successfully",
+            data: {
+                _id: board._id,
+                updated_at: board.updated_at,
+                created_at: board.created_at
+            }
         }
     } catch (error) {
         console.log(error)

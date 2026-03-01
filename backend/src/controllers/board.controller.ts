@@ -47,6 +47,7 @@ export const updateBoard = async (req: Request, res: Response) => {
         const board = await updateBoardService({ user_id, board_id, ...body })
         res.status(board.status).json({
             message: board.message,
+            data: board.data
         })
     } catch (error) {
         console.log(error)
