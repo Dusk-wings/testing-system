@@ -33,12 +33,12 @@ const taskSchema = new mongoose.Schema({
         default: 'Todo',
         required: true
     },
-    createdAt: {
+    created_at: {
         type: Date,
         default: Date.now,
         required: true,
     },
-    updatedAt: {
+    updated_at: {
         type: Date,
         default: Date.now,
         required: true,

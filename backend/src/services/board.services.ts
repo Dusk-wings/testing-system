@@ -128,7 +128,7 @@ export const getBoardById = async (data: { user_id: string, board_id: string }) 
         const cards = await Card.find({ list_id: { $in: lists.map((list: any) => list._id) } })
 
         const content = {
-            ...board,
+            ...board.toObject(),
             lists: lists.map((list: any) => {
                 return {
                     ...list,

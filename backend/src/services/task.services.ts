@@ -54,7 +54,7 @@ export const createTask = async (data: {
         })
 
         try {
-            await Task.create({
+            const task = await Task.create({
                 user_id: data.user_id,
                 title: data.title,
                 description: data.description || '',
@@ -63,10 +63,14 @@ export const createTask = async (data: {
                 status: data.status,
                 list_id: data.list_id,
                 position: numberOfTask + 1,
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
+                created_at: Date.now(),
+                updated_at: Date.now(),
             })
-            return { status: 201, message: "Task created successfully" }
+            return {
+                status: 200,
+                message: "Task created successfully",
+                data: task
+            }
         } catch (error) {
             console.log(error)
             return { status: 500, message: "Internal Server Error" }
@@ -132,8 +136,8 @@ export const updateTask = async (data: { user_id: string, task_id: string, title
             if (data.deadline) updatedData.deadline = data.deadline
             if (data.status) updatedData.status = data.status
 
-            await Task.findOneAndUpdate({ user_id: data.user_id, _id: data.task_id }, { $set: updatedData }, { runValidators: true })
-            return { status: 200, message: "Task updated successfully" }
+            const task = await Task.findOneAndUpdate({ user_id: data.user_id, _id: data.task_id }, { $set: updatedData }, { runValidators: true })
+            return { status: 200, message: "Task updated successfully", data: task?.toObject() }
         } catch (error) {
             console.log(error)
             return { status: 500, message: "Internal Server Error" }

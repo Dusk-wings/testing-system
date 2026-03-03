@@ -14,6 +14,10 @@ const cardSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    position: {
+        type: Number,
+        required: true
+    },
     created_at: {
         type: Date,
         default: Date.now

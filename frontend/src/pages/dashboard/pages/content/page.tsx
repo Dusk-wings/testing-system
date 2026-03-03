@@ -1,11 +1,21 @@
 import React from "react";
 import { useParams } from "react-router";
-import {
-  type BoardInformation,
-  type ListInformation,
-  type CardInformation
-} from "./types";
+import type { Board, Card, List } from '../../../../lib/types/board'
+import ListComponent from "../../../../components/ui/list";
+import { useDispatch } from "react-redux";
+import { type AppDispatch } from "../../../../store/store";
+import { setOpen } from "../../../../store/slice/hoverWindowSlice";
+import Button from "../../../../components/ui/button";
+import { Plus, Settings } from "lucide-react";
 
+
+interface ListInformation extends List {
+  cards: Card[];
+}
+
+interface BoardInformation extends Board {
+  lists: ListInformation[];
+}
 
 function BoardContentPage() {
   const params = useParams();
@@ -14,6 +24,8 @@ function BoardContentPage() {
   const [boardData, setBoardData] = React.useState<BoardInformation | null>(
     null,
   );
+
+  const dispatcher = useDispatch<AppDispatch>();
 
   const fetchBoardData = React.useCallback(async () => {
     setIsLoading(true);
@@ -47,7 +59,7 @@ function BoardContentPage() {
   }, [fetchBoardData]);
 
   return (
-    <div className="p-4 w-full h-dvh overflow-y-hidden flex items-start gap-4 justify-start">
+    <div className="p-4 w-full h-dvh overflow-y-hidden flex items-start gap-4 justify-start w-full">
       {isLoading ? (
         <div className="w-full h-full flex justify-center items-center">
           <p className="italic text-sm text-center">Loading ....</p>
@@ -57,29 +69,70 @@ function BoardContentPage() {
           <p className="italic text-sm text-center">{isError}</p>
         </div>
       ) : (
-        <section aria-label="Content">
-          <h1 className="text-2xl font-bold">{boardData?.title}</h1>
-          <section aria-label="Board Content">
-            {boardData?.lists.map((list: ListInformation) => {
+        <section aria-label="Content" className="w-full">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">{boardData?.title}</h1>
+            <Button onClick={() => {
+              dispatcher(setOpen({
+                heading: "Create List",
+                headingDescription: `Create a new list in ${boardData?.title}`,
+                open: true,
+                type: "LIST_CREATION",
+                data: {
+                  board_id: boardData?._id,
+                  position: (boardData?.lists.length ?? 0) + 1
+                }
+              }))
+            }}>
+              <Plus />
+            </Button>
+          </div>
+          <section aria-label="Board Content" className="mt-4 w-full">
+            {boardData?.lists.length === 0 ? (
+              <p className="text-sm text-center">
+                No lists, start by creating a list
+              </p>
+            ) : boardData?.lists.map((list: ListInformation) => {
               return (
                 <div key={list._id}>
-                  <h2 className="text-xl font-bold">{list.title}</h2>
-                  <section aria-label="List Content">
-                    {list.cards.map((card: CardInformation) => {
-                      return (
-                        <div key={card._id}>
-                          <h3 className="text-lg font-bold">{card.title}</h3>
-                          <p className="text-sm">{card.description}</p>
-                        </div>
-                      );
-                    })}
-                  </section>
+                  <ListComponent
+                    title={list.title}
+                    cards={list.cards}
+                    operation={() => {
+                      dispatcher(setOpen({
+                        heading: "Create Card",
+                        headingDescription: `Create a new card in ${list.title}`,
+                        open: true,
+                        type: 'CARD_CREATION',
+                        data: {
+                          list_id: list._id,
+                          board_id: boardData?._id,
+                          position: list.cards.length + 1
+                        }
+                      }))
+                    }}
+                  />
                 </div>
               );
             })}
           </section>
         </section>
       )}
+      <Button
+        variant="secondary"
+        onClick={() => {
+          dispatcher(setOpen({
+            heading: "Update Board",
+            headingDescription: "Update settings for this board",
+            open: true,
+            type: "BOARD_UPDATION",
+            data: {
+              board_id: boardData?._id,
+            }
+          }))
+        }} className="fixed bottom-4 right-4">
+        <Settings />
+      </Button>
     </div>
   );
 }

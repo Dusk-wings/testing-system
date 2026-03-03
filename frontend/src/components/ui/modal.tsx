@@ -1,4 +1,7 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { type AppDispatch } from "../../store/store";
+import { closeHoverWindow } from "../../store/slice/hoverWindowSlice";
 
 interface Props {
     open: boolean;
@@ -14,6 +17,24 @@ function Modal({
     children
 }: Props) {
     const dialogRef = React.useRef<HTMLDialogElement>(null);
+    const dispatcher = useDispatch<AppDispatch>();
+
+    React.useEffect(() => {
+        const dialog = dialogRef.current;
+        if (!dialog) return;
+
+        const handleClose = () => {
+            dispatcher(closeHoverWindow())
+        };
+
+        dialog.addEventListener("cancel", handleClose);
+        dialog.addEventListener("close", handleClose);
+
+        return () => {
+            dialog.removeEventListener("cancel", handleClose);
+            dialog.removeEventListener("close", handleClose);
+        };
+    }, []);
 
     React.useEffect(() => {
         if (!dialogRef.current) return;
