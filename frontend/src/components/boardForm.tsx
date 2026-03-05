@@ -5,7 +5,7 @@ import Input from "./ui/input";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../store/store";
 import { addBoard, updateBoard } from "../store/slice/boardSlice";
-import { closeHoverWindow } from "../store/slice/hoverWindowSlice";
+import { closeHoverWindow, setOpen } from "../store/slice/hoverWindowSlice";
 import ModalFooter from "./ui/modalFooter";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
@@ -30,9 +30,51 @@ function BoardForm() {
             visibility: "Public",
         }
     });
+    const [isLoading, setIsLoading] = React.useState(true)
+
+    const getBoardData = async (board_id?: string) => {
+        if (!board_id || board_id == '') return;
+        setIsLoading(true);
+        try {
+            const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
+            const data = await fetch(`${SERVER_PATH}/api/boards/${board_id}`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            })
+            const result = await data.json();
+            if (data.ok) {
+                setCurrentBoardData(result.data);
+                reset({
+                    title: result.data.title,
+                    description: result.data.description,
+                    visibility: result.data.visibility,
+                })
+            } else {
+                dispatcher(setOpen({
+                    type: "ERROR",
+                    open: true,
+                    heading: "ERROR",
+                    headingDescription: result.message
+                }))
+            }
+        } catch (error) {
+            dispatcher(setOpen({
+                type: "ERROR",
+                open: true,
+                heading: "Error",
+                headingDescription: 'Unable to get the board data'
+            }))
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     React.useEffect(() => {
         if (hoverWindow.type == 'BOARD_UPDATION') {
+            console.log("Hello", hoverWindow.data)
             if (boardData.length > 0) {
                 const board = boardData.find((board) => board._id === hoverWindow.data?.id);
                 if (board) {
@@ -43,7 +85,11 @@ function BoardForm() {
                         visibility: board.visibility,
                     });
                 }
+            } else {
+                getBoardData(hoverWindow.data?.id as string);
             }
+        } else {
+            setIsLoading(false);
         }
     }, [hoverWindow, boardData])
 
@@ -131,20 +177,26 @@ function BoardForm() {
                 {errors.root && <p className="text-sm text-red-600">{errors.root.message}</p>}
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="title">Title</Label>
-                    <Controller
-                        control={control}
-                        name="title"
-                        render={({ field }) => <Input {...field} placeholder="Chat App" className="w-full" id="title" />}
-                    />
+                    {isLoading ?
+                        <div className="w-full h-10 bg-zinc-200 animate-pulse rounded-lg"></div>
+                        :
+                        <Controller
+                            control={control}
+                            name="title"
+                            render={({ field }) => <Input {...field} placeholder="Chat App" className="w-full" id="title" />}
+                        />}
                     {errors.title && <p className="text-sm text-red-600">{errors.title.message}</p>}
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="description">Description</Label>
-                    <Controller
-                        control={control}
-                        name="description"
-                        render={({ field }) => <Input {...field} placeholder="Defines the stuff that needed to be ...." className="w-full" id="description" />}
-                    />
+                    {isLoading ?
+                        <div className="w-full h-10 bg-zinc-200 animate-pulse rounded-lg"></div>
+                        :
+                        <Controller
+                            control={control}
+                            name="description"
+                            render={({ field }) => <Input {...field} placeholder="Defines the stuff that needed to be ...." className="w-full" id="description" />}
+                        />}
                     {errors.description && <p className="text-sm text-red-600">{errors.description.message}</p>}
                 </div>
                 <div className="flex flex-col gap-2">
@@ -156,13 +208,16 @@ function BoardForm() {
                             render={({ field }) => (
                                 <>
                                     <div className="flex gap-2 items-center">
-                                        <Input
-                                            type="radio"
-                                            checked={field.value === "Public"}
-                                            {...field}
-                                            value="Public"
-                                            id="visibility-public"
-                                        />
+                                        {isLoading ?
+                                            <div className="w-4 h-4 bg-zinc-200 animate-pulse rounded-full"></div>
+                                            :
+                                            <Input
+                                                type="radio"
+                                                checked={field.value === "Public"}
+                                                {...field}
+                                                value="Public"
+                                                id="visibility-public"
+                                            />}
 
                                         <Label
                                             htmlFor="visibility-public"
@@ -171,13 +226,15 @@ function BoardForm() {
                                         </Label>
                                     </div>
                                     <div className="flex gap-2 items-center">
-                                        <Input
-                                            type="radio"
-                                            checked={field.value === "Private"}
-                                            {...field}
-                                            value="Private"
-                                            id="visibility-private"
-                                        />
+                                        {isLoading ?
+                                            <div className="w-4 h-4 bg-zinc-200 animate-pulse rounded-full"></div>
+                                            : <Input
+                                                type="radio"
+                                                checked={field.value === "Private"}
+                                                {...field}
+                                                value="Private"
+                                                id="visibility-private"
+                                            />}
                                         <Label
                                             htmlFor="visibility-private"
                                         >

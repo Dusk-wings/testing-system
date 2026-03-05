@@ -1,9 +1,17 @@
 import Board from "@src/models/board.model"
 import List from "@src/models/list.model"
+import mongoose from "mongoose";
 
-export const createList = async ({ title, board_id, user_id }: { title: string, board_id: string, user_id: string }) => {
+export const createList = async ({ title, board_id: boardId, user_id: userID }: { title: string, board_id: string, user_id: string }) => {
     try {
-        const doesUserOwnsTheBoard = await Board.findOne({ _id: board_id, user: user_id });
+        const board_id = new mongoose.Types.ObjectId(boardId);
+        const user_id = new mongoose.Types.ObjectId(userID);
+
+        const doesUserOwnsTheBoard = await Board.findOne({
+            _id: board_id,
+            user_id: user_id
+        });
+        console.log(doesUserOwnsTheBoard)
         if (!doesUserOwnsTheBoard) {
             return { status: 403, message: "You don't own this board" };
         }

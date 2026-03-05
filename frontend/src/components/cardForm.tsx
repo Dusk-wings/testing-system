@@ -8,18 +8,35 @@ import { useDispatch } from "react-redux";
 import { addCard, updateCard } from "../store/slice/currentData";
 import ModalFooter from "./ui/modalFooter";
 import { closeHoverWindow, setOpen } from "../store/slice/hoverWindowSlice";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { cardValidator } from "../lib/validation/card.creator.validation";
 
 function CardForm() {
-    const { register, control, handleSubmit } = useForm<CardCreator>();
+    const {
+        register,
+        control,
+        handleSubmit,
+        formState: { isSubmitting, errors }
+    } = useForm<CardCreator>({
+        resolver: zodResolver(cardValidator),
+        defaultValues: {
+            title: "",
+            deadline: new Date(),
+            description: ""
+        }
+    });
     const dataRecived = useSelector((state: RootState) => state.hoverWindow.data);
     const openFor = useSelector((state: RootState) => state.hoverWindow.type);
     const dispatch = useDispatch<AppDispatch>();
 
     const onSubmit = async (data: CardCreator) => {
+        console.log(data)
         if (!dataRecived?.list_id
-            || !dataRecived?.board_id
-            || !dataRecived?.position) return;
+            || !dataRecived?.board_id) return;
 
+        console.log(dataRecived)
+
+        console.log('Is moving in')
         const dataToSend: any = {
             list_id: dataRecived.list_id,
             board_id: dataRecived.board_id,
@@ -59,6 +76,7 @@ function CardForm() {
             if (openFor == 'CARD_UPDATION') {
                 dispatch(updateCard(responseData.data))
             } else {
+                console.log(responseData.data)
                 dispatch(addCard(responseData.data))
             }
             dispatch(closeHoverWindow());
@@ -74,10 +92,14 @@ function CardForm() {
         }
     }
 
+
+
     return (
-        <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div>
+        <div className="flex flex-col gap-4 min-w-64 w-96">
+            <form id="form" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full">
+                {errors.root && <p className="text-red-500 text-sm">{errors.root.message}</p>}
+                <div >
+                    {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
                     <Label htmlFor="title">Title</Label>
                     <Controller
                         name="title"
@@ -92,6 +114,7 @@ function CardForm() {
                     />
                 </div>
                 <div>
+                    {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
                     <Label htmlFor="description">Description</Label>
                     <Controller
                         name="description"
@@ -105,18 +128,21 @@ function CardForm() {
                         )}
                     />
                 </div>
-                <div>
+                <div className="flex gap-4 items-center">
+                    {errors.deadline && <p className="text-red-500 text-sm">{errors.deadline.message}</p>}
                     <Label htmlFor="deadline">Deadline</Label>
                     <input
                         id="deadline"
                         type="date"
-                        {...register("deadline")}
+                        className="bg-purple-100 p-2 rounded-xl"
+                        {...register("deadline", { valueAsDate: true })}
                     />
                 </div>
             </form>
             <ModalFooter
                 onClose={() => dispatch(closeHoverWindow())}
                 submitText="Create Card"
+                submiting={isSubmitting}
             />
         </div>
     )

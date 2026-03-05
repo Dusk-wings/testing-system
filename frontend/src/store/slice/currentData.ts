@@ -2,11 +2,11 @@ import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/tool
 import type { Board, Card, List } from "../../lib/types/board";
 
 
-interface ListInterface extends List {
+export interface ListInterface extends List {
     cards?: Card[]
 }
 
-interface BoardInterface extends Board {
+export interface BoardInterface extends Board {
     lists: ListInterface[]
 }
 
@@ -30,7 +30,7 @@ const initialState: InitialState = {
     }
 }
 
-const fetchCurrentData = createAsyncThunk<BoardInterface, { id: string }, { rejectValue: string }>(
+export const fetchCurrentData = createAsyncThunk<BoardInterface, { id: string }, { rejectValue: string }>(
     "currentData/fetchCurrentData",
     async (params: { id: string }, { rejectWithValue }) => {
         try {
@@ -80,11 +80,11 @@ const CurrentDataSlice = createSlice({
                 }
             }
         },
-        addList: (state, action: PayloadAction<List>) => {
+        addList: (state, action: PayloadAction<ListInterface>) => {
             state.board.lists.push(action.payload)
         },
-        removeList: (state, action: PayloadAction<List>) => {
-            state.board.lists.filter((list) => list._id !== action.payload._id)
+        removeList: (state, action: PayloadAction<string>) => {
+            state.board.lists.filter((list) => list._id !== action.payload)
         },
         updateList: (state, action: PayloadAction<List>) => {
             const list = state.board.lists.find((list) => list._id === action.payload._id);
@@ -114,5 +114,5 @@ const CurrentDataSlice = createSlice({
 })
 
 export const { addCard, removeCard, updateCard, addList, removeList, updateList } = CurrentDataSlice.actions
-
+export default CurrentDataSlice.reducer;
 

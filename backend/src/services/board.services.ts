@@ -1,6 +1,6 @@
 import Board from "@src/models/board.model"
 import List from "@src/models/list.model"
-import Card from "@src/models/card.model"
+import Task from "@src/models/task.model"
 
 export const getBoard = async (user_id: string) => {
     try {
@@ -125,13 +125,13 @@ export const getBoardById = async (data: { user_id: string, board_id: string }) 
             }
         }
         const lists = await List.find({ board_id: data.board_id })
-        const cards = await Card.find({ list_id: { $in: lists.map((list: any) => list._id) } })
+        const cards = await Task.find({ list_id: { $in: lists.map((list: any) => list._id) } })
 
         const content = {
             ...board.toObject(),
             lists: lists.map((list: any) => {
                 return {
-                    ...list,
+                    ...list.toObject(),
                     cards: cards.filter((card: any) => card.list_id.toString() === list._id.toString())
                 }
             })

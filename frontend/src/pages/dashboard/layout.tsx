@@ -3,15 +3,18 @@ import Avatar from "../../components/ui/avatar";
 import { Suspense } from "react";
 // import logo from '../../../public/vite.svg'
 import Button from "../../components/ui/button";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
 import Dialog from "../../components/ui/modal";
-import { OpenFor } from "../../store/slice/hoverWindowSlice";
+import { closeHoverWindow, OpenFor } from "../../store/slice/hoverWindowSlice";
 import BoardForm from "../../components/boardForm";
 import DeleteContent from "../../components/deleteContent";
+import ListForm from "../../components/listFrom";
+import CardForm from "../../components/cardForm";
 
 const BoardLayout = () => {
     const dialogState = useSelector((state: RootState) => state.hoverWindow);
+    const dispatcher = useDispatch<AppDispatch>()
 
     return (
         <div className="flex flex-col h-screen">
@@ -48,7 +51,18 @@ const BoardLayout = () => {
                                 dialogState.type === OpenFor.CARD_DELETION ||
                                     dialogState.type === OpenFor.BOARD_DELETION ?
                                     <DeleteContent /> :
-                                    null
+                                    dialogState.type === OpenFor.LIST_CREATION ||
+                                        dialogState.type === OpenFor.LIST_UPDATION ?
+                                        <ListForm /> :
+                                        dialogState.type === OpenFor.CARD_CREATION ||
+                                            dialogState.type === OpenFor.CARD_UPDATION ?
+                                            <CardForm /> :
+                                            dialogState.type == OpenFor.ERROR ?
+                                                <Button variant="danger" onClick={() => dispatcher(closeHoverWindow())}>
+                                                    Close
+                                                </Button>
+                                                :
+                                                null
                         }
                     />
                 )}

@@ -10,17 +10,17 @@ import { authMiddleware } from "@src/middlewares/auth.middleware";
 
 const router = Router();
 
-router.post("/create",
+router.post("/",
     authMiddleware,
     listValidator,
     createList
 );
-router.put("/update",
+router.put("/",
     authMiddleware,
     listUpdateValidator,
     updateList
 );
-router.delete("/delete/:list_id",
+router.delete("/:list_id",
     authMiddleware,
     deleteList
 );

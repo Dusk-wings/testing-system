@@ -1,118 +1,106 @@
 import React from "react";
 import { useParams } from "react-router";
-import type { Board, Card, List } from '../../../../lib/types/board'
 import ListComponent from "../../../../components/ui/list";
-import { useDispatch } from "react-redux";
-import { type AppDispatch } from "../../../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { type AppDispatch, type RootState } from "../../../../store/store";
 import { setOpen } from "../../../../store/slice/hoverWindowSlice";
 import Button from "../../../../components/ui/button";
 import { Plus, Settings } from "lucide-react";
+import { fetchCurrentData, type ListInterface } from "../../../../store/slice/currentData";
 
-
-interface ListInformation extends List {
-  cards: Card[];
-}
-
-interface BoardInformation extends Board {
-  lists: ListInformation[];
-}
 
 function BoardContentPage() {
   const params = useParams();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState<string | null>(null);
-  const [boardData, setBoardData] = React.useState<BoardInformation | null>(
-    null,
-  );
+  const boardData = useSelector((state: RootState) => state.currentData)
 
   const dispatcher = useDispatch<AppDispatch>();
 
-  const fetchBoardData = React.useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
-      const response = await fetch(`${SERVER_PATH}/api/boards/${params.id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setBoardData(data.data);
-      } else {
-        setIsError(data.message);
-      }
-      setIsLoading(false);
-    } catch (error) {
-      console.error(error);
-      setIsError(
-        "Network Error, please try to connect to internet or wait for a while",
-      );
-      setIsLoading(false);
-    }
-  }, [params.id]);
+  // const fetchBoardData = React.useCallback(async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
+  //     const response = await fetch(`${SERVER_PATH}/api/boards/${params.id}`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       credentials: "include",
+  //     });
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       console.log(data.data)
+  //       setBoardData(data.data);
+  //     } else {
+  //       setIsError(data.message);
+  //     }
+  //     setIsLoading(false);
+  //   } catch (error) {
+  //     console.error(error);
+  //     setIsError(
+  //       "Network Error, please try to connect to internet or wait for a while",
+  //     );
+  //     setIsLoading(false);
+  //   }
+  // }, [params.id]);
+
 
   React.useEffect(() => {
-    fetchBoardData();
-  }, [fetchBoardData]);
+    dispatcher(fetchCurrentData({ id: params.id! }));
+  }, []);
 
   return (
     <div className="p-4 w-full h-dvh overflow-y-hidden flex items-start gap-4 justify-start w-full">
-      {isLoading ? (
+      {boardData.isLoading ? (
         <div className="w-full h-full flex justify-center items-center">
           <p className="italic text-sm text-center">Loading ....</p>
         </div>
-      ) : isError ? (
+      ) : boardData.isError ? (
         <div className="w-full h-full flex justify-center items-center">
-          <p className="italic text-sm text-center">{isError}</p>
+          <p className="italic text-sm text-center">{boardData.isError}</p>
         </div>
       ) : (
-        <section aria-label="Content" className="w-full">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">{boardData?.title}</h1>
+        <section aria-label="Content" className="w-full overflow-hidden">
+          <div className="flex justify-between items-center w-full">
+            <h1 className="text-2xl font-bold">{boardData.board?.title}</h1>
             <Button onClick={() => {
               dispatcher(setOpen({
                 heading: "Create List",
-                headingDescription: `Create a new list in ${boardData?.title}`,
+                headingDescription: `Create a new list in ${boardData.board?.title}`,
                 open: true,
                 type: "LIST_CREATION",
                 data: {
-                  board_id: boardData?._id,
-                  position: (boardData?.lists.length ?? 0) + 1
+                  board_id: boardData.board?._id,
+                  position: (boardData.board?.lists.length ?? 0) + 1
                 }
               }))
             }}>
               <Plus />
             </Button>
           </div>
-          <section aria-label="Board Content" className="mt-4 w-full">
-            {boardData?.lists.length === 0 ? (
+          <section aria-label="Board Content" className="mt-4 w-full overflow-x-auto flex gap-2 flex-nowrap h-full ">
+            {boardData.board?.lists.length === 0 ? (
               <p className="text-sm text-center">
                 No lists, start by creating a list
               </p>
-            ) : boardData?.lists.map((list: ListInformation) => {
+            ) : boardData.board?.lists.map((list: ListInterface) => {
               return (
-                <div key={list._id}>
-                  <ListComponent
-                    title={list.title}
-                    cards={list.cards}
-                    operation={() => {
-                      dispatcher(setOpen({
-                        heading: "Create Card",
-                        headingDescription: `Create a new card in ${list.title}`,
-                        open: true,
-                        type: 'CARD_CREATION',
-                        data: {
-                          list_id: list._id,
-                          board_id: boardData?._id,
-                          position: list.cards.length + 1
-                        }
-                      }))
-                    }}
-                  />
-                </div>
+                <ListComponent
+                  key={list._id}
+                  title={list.title}
+                  cards={list.cards ?? []}
+                  operation={() => {
+                    dispatcher(setOpen({
+                      heading: "Create Card",
+                      headingDescription: `Create a new card in ${list.title}`,
+                      open: true,
+                      type: 'CARD_CREATION',
+                      data: {
+                        list_id: list._id,
+                        board_id: boardData.board?._id,
+                      }
+                    }))
+                  }}
+                />
               );
             })}
           </section>
@@ -127,7 +115,7 @@ function BoardContentPage() {
             open: true,
             type: "BOARD_UPDATION",
             data: {
-              board_id: boardData?._id,
+              id: boardData.board?._id,
             }
           }))
         }} className="fixed bottom-4 right-4">

@@ -13,6 +13,8 @@ export const createTask = async (data: {
     list_id: string
 }) => {
     try {
+
+        console.log("User Id : ", data.user_id, "Title : ", data.title, "Description : ", data.description, "Deadline : ", data.deadline, "Board Id : ", data.board_id, "Status : ", data.status, "List Id : ", data.list_id)
         if (!data.user_id ||
             !data.title ||
             !data.deadline ||
@@ -66,10 +68,11 @@ export const createTask = async (data: {
                 created_at: Date.now(),
                 updated_at: Date.now(),
             })
+            console.log(task)
             return {
                 status: 200,
                 message: "Task created successfully",
-                data: task
+                data: task.toObject()
             }
         } catch (error) {
             console.log(error)

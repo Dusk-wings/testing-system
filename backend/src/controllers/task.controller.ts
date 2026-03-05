@@ -4,6 +4,7 @@ import { createTask as createTaskService, getTasks as getTasksService, updateTas
 export const createTask = async (req: Request, res: Response) => {
     const user_id = req.user?.id
     const { title, description, deadline, board_id, status, list_id } = req.body
+    console.log("Controller -> User Id : ", req.body)
     const result = await createTaskService({
         user_id: user_id,
         title: title,
@@ -16,6 +17,7 @@ export const createTask = async (req: Request, res: Response) => {
     if (result.status === 200) {
         return res.status(result.status).json({
             message: result.message,
+            data: result.data,
         })
     }
 
