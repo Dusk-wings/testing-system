@@ -1,3 +1,4 @@
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../store/store";
 import { Controller, useForm } from "react-hook-form";
@@ -18,6 +19,7 @@ function ListForm() {
         control,
         handleSubmit,
         formState: { isSubmitting, errors },
+        reset
     } = useForm<ListCreator>(
         {
             defaultValues: {
@@ -25,6 +27,15 @@ function ListForm() {
             }
         }
     )
+
+    React.useEffect(() => {
+        if (openFor == 'LIST_UPDATION') {
+            reset({
+                title: dataRecived?.title as string
+            })
+        }
+    }, [openFor])
+
     const onSubmit = async (data: ListCreator) => {
         try {
             if (openFor == 'LIST_UPDATION' &&
@@ -72,6 +83,7 @@ function ListForm() {
                         cards: []
                     }))
                 } else {
+                    console.log(responseData.data)
                     dispatch(updateList({
                         _id: responseData.data._id,
                         title: responseData.data.title,

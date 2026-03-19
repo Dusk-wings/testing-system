@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import { createTask as createTaskService, getTasks as getTasksService, updateTask as updateTaskService, deleteTask as deleteTaskService } from "../services/task.services"
+import {
+    createTask as createTaskService,
+    getTasks as getTasksService,
+    updateTask as updateTaskService,
+    deleteTask as deleteTaskService,
+    updateTaskPosition as updatePositionService
+} from "../services/task.services"
 
 export const createTask = async (req: Request, res: Response) => {
     const user_id = req.user?.id
@@ -49,6 +55,7 @@ export const updateTask = async (req: Request, res: Response) => {
     if (result.status === 200) {
         return res.status(result.status).json({
             message: result.message,
+            data: result.data
         })
     }
 
@@ -59,11 +66,34 @@ export const updateTask = async (req: Request, res: Response) => {
 
 export const deleteTask = async (req: Request, res: Response) => {
     const user_id = req.user?.id
-    const { task_id } = req.body
-    const result = await deleteTaskService({ user_id: user_id, task_id: task_id })
+    const { id } = req.params
+    const result = await deleteTaskService({ user_id: user_id, task_id: id })
     if (result.status === 200) {
         return res.status(result.status).json({
             message: result.message,
+            data: result.data
+        })
+    }
+
+    return res.status(result.status).json({
+        message: result.message
+    })
+}
+
+export const updatePosition = async (req: Request, res: Response) => {
+    const user_id = req.user?.id
+    const { task_id, list_id, position, movement } = req.body
+    const result = await updatePositionService({
+        user_id: user_id,
+        task_id: task_id,
+        list_id: list_id,
+        position: position,
+        typeOfUpdate: movement,
+    })
+    if (result.status === 200) {
+        return res.status(result.status).json({
+            message: result.message,
+            data: result.data
         })
     }
 

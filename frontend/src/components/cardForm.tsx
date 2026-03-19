@@ -10,13 +10,15 @@ import ModalFooter from "./ui/modalFooter";
 import { closeHoverWindow, setOpen } from "../store/slice/hoverWindowSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cardValidator } from "../lib/validation/card.creator.validation";
+import React from "react";
 
 function CardForm() {
     const {
         register,
         control,
         handleSubmit,
-        formState: { isSubmitting, errors }
+        formState: { isSubmitting, errors },
+        reset
     } = useForm<CardCreator>({
         resolver: zodResolver(cardValidator),
         defaultValues: {
@@ -28,6 +30,16 @@ function CardForm() {
     const dataRecived = useSelector((state: RootState) => state.hoverWindow.data);
     const openFor = useSelector((state: RootState) => state.hoverWindow.type);
     const dispatch = useDispatch<AppDispatch>();
+
+    React.useEffect(() => {
+        if (openFor == 'CARD_UPDATION') {
+            reset({
+                title: dataRecived?.title as string,
+                description: dataRecived?.description as string,
+                deadline: new Date(dataRecived?.deadline as string).toISOString().split('T')[0] as any
+            })
+        }
+    }, [openFor])
 
     const onSubmit = async (data: CardCreator) => {
         console.log(data)
@@ -76,7 +88,6 @@ function CardForm() {
             if (openFor == 'CARD_UPDATION') {
                 dispatch(updateCard(responseData.data))
             } else {
-                console.log(responseData.data)
                 dispatch(addCard(responseData.data))
             }
             dispatch(closeHoverWindow());

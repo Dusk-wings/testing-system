@@ -139,8 +139,18 @@ export const updateTask = async (data: { user_id: string, task_id: string, title
             if (data.deadline) updatedData.deadline = data.deadline
             if (data.status) updatedData.status = data.status
 
-            const task = await Task.findOneAndUpdate({ user_id: data.user_id, _id: data.task_id }, { $set: updatedData }, { runValidators: true })
-            return { status: 200, message: "Task updated successfully", data: task?.toObject() }
+            const task = await Task.findOneAndUpdate(
+                { user_id: data.user_id, _id: data.task_id },
+                { $set: updatedData },
+                { runValidators: true, new: true }
+            )
+            return {
+                status: 200,
+                message: "Task updated successfully",
+                data: {
+                    ...task?.toObject(),
+                }
+            }
         } catch (error) {
             console.log(error)
             return { status: 500, message: "Internal Server Error" }
@@ -166,7 +176,13 @@ export const deleteTask = async (data: { user_id: string, task_id: string }) => 
     }
 }
 
-export const updateTaskPosition = async (data: { user_id: string, task_id: string, list_id: string, position: number, typeOfUpdate: "move" | "reorder" }) => {
+export const updateTaskPosition = async (data: {
+    user_id: string,
+    task_id: string,
+    list_id: string,
+    position: number,
+    typeOfUpdate: "move" | "reorder"
+}) => {
     try {
         const task = await Task.findOne({ _id: data.task_id })
         if (!task) {
@@ -176,7 +192,10 @@ export const updateTaskPosition = async (data: { user_id: string, task_id: strin
             return { status: 403, message: "Forbidden" }
         }
         if (data.typeOfUpdate === "move") {
-            const list = await List.findOne({ _id: data.list_id, board_id: task.board_id })
+            const list = await List.findOne({
+                _id: data.list_id,
+                board_id: task.board_id
+            })
             if (!list) {
                 return { status: 404, message: "List not found" }
             }
@@ -200,47 +219,82 @@ export const updateTaskPosition = async (data: { user_id: string, task_id: strin
             task.position = numberOfCards + 1;
 
             await task.save()
-            return { status: 200, message: "Task updated successfully", data: task }
+            return {
+                status: 200,
+                message: "Task updated successfully",
+                data: { ...task.toObject() }
+            }
         }
-        if (data.typeOfUpdate === "reorder") {
-            task.position = data.position;
-            if (task.position < data.position) {
+        else if (data.typeOfUpdate === "reorder") {
+            const prevPosition = task?.position || 0;
+            const newPosition = data.position;
+            console.log("Positions : ", prevPosition, newPosition)
+            if (newPosition == prevPosition) return {
+                status: 200,
+                message: "Task is already at the same position",
+                data: { ...task.toObject(), position: newPosition, prevPosition: prevPosition }
+            };
+
+            if (prevPosition < newPosition) {
+                // Moving DOWN
                 await Task.updateMany(
                     {
                         board_id: task.board_id,
                         list_id: task.list_id,
                         position: {
-                            $gt: task.position,
-                            $lte: data.position
+                            $gt: prevPosition,
+                            $lte: newPosition
                         }
                     },
                     {
                         $inc: { position: -1 }
                     }
-                )
+                );
             }
 
-            if (task.position > data.position) {
+            if (prevPosition > newPosition) {
+                // Moving UP
                 await Task.updateMany(
                     {
                         board_id: task.board_id,
                         list_id: task.list_id,
                         position: {
-                            $gte: data.position,
-                            $lt: task.position
+                            $gte: newPosition,
+                            $lt: prevPosition
                         }
                     },
                     {
                         $inc: { position: 1 }
                     }
-                )
+                );
             }
 
-            await task.save()
-            return { status: 200, message: "Task updated successfully", data: task }
+            // ✅ update AFTER shifting others
+            task.position = newPosition;
+            await task.save();
+
+            return {
+                status: 200,
+                message: "Task updated successfully",
+                data: {
+                    ...task.toObject(),
+                    position: data.position,
+                    prevPosition: prevPosition
+                }
+            }
+        } else {
+            return {
+                status: 400,
+                message: "Invalid type of update",
+                data: null
+            }
         }
     } catch (error) {
         console.log(error)
-        return { status: 500, message: "Internal Server Error", data: error }
+        return {
+            status: 500,
+            message: "Internal Server Error",
+            data: error
+        }
     }
 }

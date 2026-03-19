@@ -82,7 +82,7 @@ function BoardContentPage() {
               <p className="text-sm text-center">
                 No lists, start by creating a list
               </p>
-            ) : boardData.board?.lists.map((list: ListInterface) => {
+            ) : [...(boardData.board?.lists ?? [])].sort((a, b) => a.position - b.position).map((list: ListInterface) => {
               return (
                 <ListComponent
                   key={list._id}
@@ -100,6 +100,10 @@ function BoardContentPage() {
                       }
                     }))
                   }}
+                  position={list.position}
+                  totalLists={boardData.board?.lists.length ?? 0}
+                  list_id={list._id}
+                  board_id={boardData.board?._id}
                 />
               );
             })}

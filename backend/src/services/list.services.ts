@@ -25,6 +25,7 @@ export const createList = async ({ title, board_id: boardId, user_id: userID }: 
                 position: numberOfList + 1,
                 created_at: Date.now(),
                 updated_at: Date.now(),
+                user_id: user_id
             });
 
             return { status: 201, message: "List created successfully", data: newList };
@@ -63,7 +64,10 @@ export const updateList = async ({
 
 
     try {
-        const list = await List.findOne({ _id: list_id, user_id: user_id })
+        const list = await List.findOne({
+            _id: new mongoose.Types.ObjectId(list_id),
+            user_id: new mongoose.Types.ObjectId(user_id)
+        })
         if (!list) {
             return { status: 404, message: "List not found" };
         }
@@ -99,13 +103,23 @@ export const updateList = async ({
         const updatedList = await List.findOneAndUpdate(
             { _id: list_id, user_id: user_id },
             { $set: dataToUpdate },
-            { runValidators: true }
+            { runValidators: true, new: true }
         );
 
         if (!updatedList) {
             return { status: 404, message: "List not found" };
         }
-        return { status: 200, message: "List updated successfully", data: updatedList };
+        return {
+            status: 200, message: "List updated successfully", data: {
+                _id: updatedList._id,
+                title: updatedList.title,
+                board_id: updatedList.board_id,
+                created_at: updatedList.created_at,
+                updated_at: updatedList.updated_at,
+                position,
+                prevPosition: list.position
+            }
+        };
     } catch (error) {
         console.log(error);
         return { status: 500, message: "Internal server error" };
@@ -116,7 +130,7 @@ export const updateList = async ({
 export const deleteList = async ({ list_id, user_id }: { list_id: string, user_id: string }) => {
     try {
         const deletedList = await List.findOneAndDelete(
-            { _id: list_id, user_id: user_id }
+            { _id: new mongoose.Types.ObjectId(list_id), user_id: new mongoose.Types.ObjectId(user_id) }
         );
         if (!deletedList) {
             return { status: 404, message: "List not found" };

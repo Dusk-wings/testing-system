@@ -49,6 +49,7 @@ const BoardLayout = () => {
                                 dialogState.type === OpenFor.BOARD_UPDATION ?
                                 <BoardForm /> :
                                 dialogState.type === OpenFor.CARD_DELETION ||
+                                    dialogState.type === OpenFor.LIST_DELETION ||
                                     dialogState.type === OpenFor.BOARD_DELETION ?
                                     <DeleteContent /> :
                                     dialogState.type === OpenFor.LIST_CREATION ||
