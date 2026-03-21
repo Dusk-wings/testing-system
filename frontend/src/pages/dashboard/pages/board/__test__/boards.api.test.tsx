@@ -157,6 +157,7 @@ describe('Board Data Loading', () => {
     })
 
     it('Should edit the board details when the user changes it', async () => {
+
         server.use(
             http.get(`${SERVER_PATH}/api/boards`, () => {
                 return HttpResponse.json({
@@ -165,6 +166,8 @@ describe('Board Data Loading', () => {
                 }, { status: 200 })
             })
         )
+
+
 
         const router = createMemoryRouter(routerInstance, {
             initialEntries: ['/dashboard/board']
@@ -184,6 +187,22 @@ describe('Board Data Loading', () => {
         expect(boardLinks[1]).toHaveTextContent('Edit')
 
         fireEvent.click(boardLinks[0])
+        server.use(
+            http.get(`${SERVER_PATH}/api/boards/board_id`, () => {
+                return HttpResponse.json({
+                    message: 'success',
+                    data: {
+                        _id: 'board_id',
+                        title: 'Board 1',
+                        description: 'Description 1',
+                        visibility: 'Public',
+                        created_at: '2022-01-01T00:00:00.000Z',
+                        updated_at: '2022-01-01T00:00:00.000Z'
+                    }
+                }, { status: 200 })
+            })
+        )
+
         expect(await screen.findByText('Edit Board')).toBeInTheDocument();
 
         const titleInput = await screen.findByLabelText('Title')

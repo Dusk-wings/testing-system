@@ -74,7 +74,6 @@ function BoardForm() {
 
     React.useEffect(() => {
         if (hoverWindow.type == 'BOARD_UPDATION') {
-            console.log("Hello", hoverWindow.data)
             if (boardData.length > 0) {
                 const board = boardData.find((board) => board._id === hoverWindow.data?.id);
                 if (board) {
@@ -84,6 +83,7 @@ function BoardForm() {
                         description: board.description,
                         visibility: board.visibility,
                     });
+                    setIsLoading(false)
                 }
             } else {
                 getBoardData(hoverWindow.data?.id as string);
@@ -183,7 +183,14 @@ function BoardForm() {
                         <Controller
                             control={control}
                             name="title"
-                            render={({ field }) => <Input {...field} placeholder="Chat App" className="w-full" id="title" />}
+                            render={({ field }) =>
+                                <Input
+                                    {...field}
+                                    placeholder="Chat App"
+                                    className="w-full"
+                                    id="title"
+                                />
+                            }
                         />}
                     {errors.title && <p className="text-sm text-red-600">{errors.title.message}</p>}
                 </div>
@@ -195,7 +202,14 @@ function BoardForm() {
                         <Controller
                             control={control}
                             name="description"
-                            render={({ field }) => <Input {...field} placeholder="Defines the stuff that needed to be ...." className="w-full" id="description" />}
+                            render={({ field }) =>
+                                <Input
+                                    {...field}
+                                    placeholder="Defines the stuff that needed to be ...."
+                                    className="w-full"
+                                    id="description"
+                                />
+                            }
                         />}
                     {errors.description && <p className="text-sm text-red-600">{errors.description.message}</p>}
                 </div>

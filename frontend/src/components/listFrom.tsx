@@ -83,7 +83,6 @@ function ListForm() {
                         cards: []
                     }))
                 } else {
-                    console.log(responseData.data)
                     dispatch(updateList({
                         _id: responseData.data._id,
                         title: responseData.data.title,
@@ -108,7 +107,7 @@ function ListForm() {
 
     return (
         <div className="flex flex-col gap-4 w-64">
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+            <form id="form" onSubmit={handleSubmit(onSubmit)} className="w-full">
                 <div className="flex gap-2 flex-col w-full">
                     {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
                     <Label htmlFor="title">Title</Label>
@@ -131,7 +130,7 @@ function ListForm() {
                 onClose={() =>
                     dispatch(closeHoverWindow())
                 }
-                submitText="Create List"
+                submitText={openFor == 'LIST_CREATION' ? "Create List" : "Update List"}
                 submiting={isSubmitting}
             />
         </div>

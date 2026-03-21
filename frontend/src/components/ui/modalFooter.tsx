@@ -25,6 +25,7 @@ function ModalFooter({ onClose, onSubmit, submitText, submitVariant, submiting }
                 type="submit"
                 onClick={onSubmit}
                 variant={submitVariant}
+                aria-label="form-operation-button"
             >
                 {submiting ? <Loader /> : submitText ? submitText : "Done"}
             </Button>

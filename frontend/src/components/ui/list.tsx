@@ -27,7 +27,6 @@ function List({ title, cards, list_id, board_id, operation, position, totalLists
 
         if (direction === 'up' || direction == 'down') return;
 
-
         try {
             const newPosition = direction === 'left' ? position - 1 : position + 1;
             const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
@@ -45,7 +44,6 @@ function List({ title, cards, list_id, board_id, operation, position, totalLists
                 })
             });
             const response = await data.json();
-            console.log(response)
             if (data.ok) {
                 dispatch(
                     updateListPosition({
@@ -77,7 +75,11 @@ function List({ title, cards, list_id, board_id, operation, position, totalLists
     }
 
     return (
-        <div className="flex flex-col gap-2 min-h-fit  max-h-96 w-96 bg-purple-200 rounded-xl p-4 flex-shrink-0">
+        <div
+            className="flex flex-col gap-2 min-h-fit  max-h-96 w-96 bg-purple-200 rounded-xl p-4 flex-shrink-0"
+            aria-label="list-content"
+            role="region"
+        >
             <div className="flex justify-between items-center">
                 <h2>{title}</h2>
                 <div id="button-section" className="flex gap-1">

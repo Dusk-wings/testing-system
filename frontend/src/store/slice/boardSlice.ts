@@ -31,7 +31,7 @@ export const getBoardData = createAsyncThunk<Board[], void, { rejectValue: strin
         return data.data;
     } catch (error) {
         console.error(error);
-        return rejectWithValue(error as string);
+        return rejectWithValue("Network Error, Please check your network");
     }
 })
 

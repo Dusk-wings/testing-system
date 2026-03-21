@@ -51,11 +51,19 @@ function BoardContentPage() {
   return (
     <div className="p-4 w-full h-dvh overflow-y-hidden flex items-start gap-4 justify-start w-full">
       {boardData.isLoading ? (
-        <div className="w-full h-full flex justify-center items-center">
+        <div
+          className="w-full h-full flex justify-center items-center"
+          aria-label="loading-region"
+          role="region"
+        >
           <p className="italic text-sm text-center">Loading ....</p>
         </div>
       ) : boardData.isError ? (
-        <div className="w-full h-full flex justify-center items-center">
+        <div
+          className="w-full h-full flex justify-center items-center"
+          aria-label="error-region"
+          role="region"
+        >
           <p className="italic text-sm text-center">{boardData.isError}</p>
         </div>
       ) : (

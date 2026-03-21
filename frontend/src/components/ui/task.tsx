@@ -51,7 +51,6 @@ function Task({
             target_list_id = currentData.board.lists.find(list => list.position == listPositon + 1)?._id || '';
         }
 
-
         try {
             const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
             const data = await fetch(`${SERVER_PATH}/api/tasks/position`, {
@@ -75,7 +74,6 @@ function Task({
                 })
             });
             const response = await data.json();
-            console.log(response)
             if (data.ok) {
                 dispatch(
                     updateCardPosition({
@@ -110,7 +108,11 @@ function Task({
     }
 
     return (
-        <div className="flex flex-col gap-4 bg-purple-100 rounded-xl p-2">
+        <div
+            className="flex flex-col gap-4 bg-purple-100 rounded-xl p-2"
+            aria-label="task-content"
+            role="region"
+        >
             <section id="content" className="flex justify-between items-start">
                 <div id="test-contnet">
 
@@ -131,6 +133,7 @@ function Task({
             <section id="buttons" className="flex justify-between items-center">
                 <Button
                     variant="danger"
+                    aria-label="delete-card"
                     onClick={() => dispatch(setOpen({
                         type: "CARD_DELETION",
                         open: true,
@@ -147,6 +150,7 @@ function Task({
                 </Button>
                 <Button
                     variant="primary"
+                    aria-label="edit-card"
                     onClick={() => dispatch(setOpen({
                         type: "CARD_UPDATION",
                         open: true,

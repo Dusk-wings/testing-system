@@ -42,6 +42,7 @@ function BoardPage() {
           <section
             className="flex justify-center items-center w-full"
             aria-label="Loading"
+            role="region"
           >
             <p className="text-center text-gray-500">Loading...</p>
           </section>

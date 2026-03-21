@@ -152,7 +152,7 @@ function CardForm() {
             </form>
             <ModalFooter
                 onClose={() => dispatch(closeHoverWindow())}
-                submitText="Create Card"
+                submitText={openFor == 'CARD_UPDATION' ? "Update Card" : "Create Card"}
                 submiting={isSubmitting}
             />
         </div>
