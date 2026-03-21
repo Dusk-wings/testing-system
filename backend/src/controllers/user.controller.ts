@@ -94,7 +94,7 @@ export const refereshToken = async (req: Request, res: Response, next: NextFunct
         return res.status(result.status).json({
             user_id: result.user_id,
             message: result.message,
-            user: result.user
+            user: result.user,
         })
     }
 
@@ -119,9 +119,29 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 }
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-    const user_id = req.user?.id;
+    const user_id = req.user?.id as string;
     const body = req.body;
-    const result = await updateUserService({ user_id: user_id, ...body })
+
+    let profileImage;
+    let backgroundImage;
+
+    if (req.files) {
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        if (files.profileImage && files.profileImage[0]) {
+            const SERVER_PATH = process.env.VITE_BACKEND_PATH || 'http://localhost:3000';
+            profileImage = `${SERVER_PATH}/uploads/${files.profileImage[0].filename}`;
+        }
+        if (files.backgroundImage && files.backgroundImage[0]) {
+            const SERVER_PATH = process.env.VITE_BACKEND_PATH || 'http://localhost:3000';
+            backgroundImage = `${SERVER_PATH}/uploads/${files.backgroundImage[0].filename}`;
+        }
+    }
+
+    const updateData: any = { user_id, ...body };
+    if (profileImage) updateData.profileImage = profileImage;
+    if (backgroundImage) updateData.backgroundImage = backgroundImage;
+
+    const result = await updateUserService(updateData)
     if (result.status === 200) {
         return res.status(result.status).json({
             message: result.message

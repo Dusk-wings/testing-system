@@ -12,7 +12,7 @@ const Avatar = ({ src, alt }: AvatarProps) => {
                 src ? (
                     <img src={src} alt={alt} className="w-10 h-10 rounded-full" />
                 ) : (
-                    <div className="w-10 h-10 rounded-full bg-zinc-300 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-zinc-300 flex items-center justify-center object-contain">
                         <User />
                     </div>
                 )

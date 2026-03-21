@@ -49,6 +49,27 @@ describe("PUT /api/user/", () => {
 
     })
 
+    it("should update user images", async () => {
+        mockUserModel.findOne.mockResolvedValue({ id: "1", name: "John Doe" } as any);
+        mockUpdateUser.mockResolvedValue({ status: 200, message: "User Updated" } as any);
+        mockUserModel.findById.mockResolvedValue({ _id: '1', name: 'test', email: 'test' });
+
+        const [accessToken] = accessTokenGenrator("1");
+        const res = await request(app).put('/api/users').set('Cookie', [`access_token=${accessToken}`]).send({
+            profileImage: "prof.png",
+            backgroundImage: "bg.png"
+        })
+
+        expect(res.status).toBe(200);
+        expect(res.body.message).toBe("User Updated");
+
+        expect(mockUpdateUser).toHaveBeenCalledWith({
+            user_id: "1",
+            profileImage: "prof.png",
+            backgroundImage: "bg.png"
+        })
+    })
+
     it("should throw error if user is not found", async () => {
         mockUserModel.findOne.mockResolvedValue(null);
         mockUpdateUser.mockResolvedValue({ status: 404, message: "User not found" } as any);

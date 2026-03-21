@@ -14,6 +14,7 @@ import CardForm from "../../components/cardForm";
 
 const BoardLayout = () => {
     const dialogState = useSelector((state: RootState) => state.hoverWindow);
+    const { user } = useSelector((state: RootState) => state.auth);
     const dispatcher = useDispatch<AppDispatch>()
 
     return (
@@ -26,10 +27,10 @@ const BoardLayout = () => {
                         </li>
                         <li className="px-4 border-l border-gray-200">
                             <div className="flex gap-4">
-                                <Link to="/account">
+                                <Link to="/dashboard/account">
                                     <Avatar
-                                        src=""
-                                        alt=""
+                                        src={user?.profileImage || ""}
+                                        alt={user?.name || "Avatar"}
                                     />
                                 </Link>
                                 <Button variant="danger">Logout</Button>

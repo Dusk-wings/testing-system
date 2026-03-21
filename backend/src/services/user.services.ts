@@ -6,6 +6,8 @@ import { refreshTokenGenrator } from "@src/utils/refereshTokenGenrator";
 import { UserLoginData } from "@src/validation/user.login.validation";
 import { UserDataType } from "@src/validation/user.validation"
 import bcrypt from "bcrypt"
+import fs from "fs"
+import path from "path"
 
 export const createUser = async (data: UserDataType) => {
     try {
@@ -110,8 +112,16 @@ export const refereshToken = async (refresh_token: string) => {
 
         try {
             await RefereshTokenModel.updateOne({ token: refresh_token }, { token: newRefreshToken, expires_at: Date.now() + 1000 * 60 * 60 * 24 * 4 })
-            const user = await getUser({ user_id: doesTokenExist.user_id })
-            return { status: 200, user_id: doesTokenExist.user_id, user, access_token: accessToken, refresh_token: newRefreshToken, message: "Token Issued Again", access_token_expires_in: expiresIn };
+            const userResponse = await getUser({ user_id: doesTokenExist.user_id })
+            return {
+                status: 200,
+                user_id: doesTokenExist.user_id,
+                user: userResponse.user,
+                access_token: accessToken,
+                refresh_token: newRefreshToken,
+                message: "Token Issued Again",
+                access_token_expires_in: expiresIn
+            };
         } catch (error) {
             console.log(error);
             return { status: 500, message: "Internal Server Error" }
@@ -129,14 +139,14 @@ export const getUser = async (data: { user_id: string }) => {
         if (!doesUserExist) {
             return { status: 404, message: "User not found" }
         }
-        return { status: 200, user: { name: doesUserExist.name, email: doesUserExist.email }, message: "User Found" };
+        return { status: 200, user: { name: doesUserExist.name, email: doesUserExist.email, profileImage: doesUserExist.profileImage, backgroundImage: doesUserExist.backgroundImage }, message: "User Found" };
     } catch (error) {
         console.log(error);
         return { status: 500, message: "Internal Server Error" }
     }
 }
 
-export const updateUser = async (data: { user_id: string, name: string }) => {
+export const updateUser = async (data: { user_id: string, name?: string, profileImage?: string, backgroundImage?: string }) => {
     try {
         const doesUserExist = await UserModel.findOne({ _id: data.user_id })
 
@@ -144,7 +154,32 @@ export const updateUser = async (data: { user_id: string, name: string }) => {
             return { status: 404, message: "User not found" }
         }
         try {
-            await UserModel.updateOne({ _id: data.user_id }, { $set: { name: data.name } })
+            const updateData: any = {};
+            if (data.name) updateData.name = data.name;
+            if (data.profileImage !== undefined) updateData.profileImage = data.profileImage;
+            if (data.backgroundImage !== undefined) updateData.backgroundImage = data.backgroundImage;
+            await UserModel.updateOne({ _id: data.user_id }, { $set: updateData })
+
+            // Delete old images if new ones were provided
+            try {
+                if (data.profileImage && doesUserExist.profileImage) {
+                    const oldFileName = doesUserExist.profileImage.split('/').pop();
+                    if (oldFileName) {
+                        const oldFilePath = path.join(process.cwd(), 'uploads', oldFileName);
+                        if (fs.existsSync(oldFilePath)) fs.unlinkSync(oldFilePath);
+                    }
+                }
+                if (data.backgroundImage && doesUserExist.backgroundImage) {
+                    const oldFileName = doesUserExist.backgroundImage.split('/').pop();
+                    if (oldFileName) {
+                        const oldFilePath = path.join(process.cwd(), 'uploads', oldFileName);
+                        if (fs.existsSync(oldFilePath)) fs.unlinkSync(oldFilePath);
+                    }
+                }
+            } catch (err) {
+                console.error("Error deleting old images:", err);
+            }
+
             return { status: 200, message: "User Updated" };
         } catch (error) {
             console.log(error);

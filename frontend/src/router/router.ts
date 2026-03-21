@@ -9,6 +9,7 @@ import { loginUser } from "../store/slice/authSlice";
 import { redirect } from "react-router";
 import BoardPage from "../pages/dashboard/pages/board/board.tsx";
 import BoardContentPage from "../pages/dashboard/pages/content/page.tsx";
+import AccountPage from "../pages/dashboard/pages/account/account.tsx";
 
 const requireAuth = async () => {
     const state = store.getState();
@@ -80,6 +81,11 @@ export const routerInstance = [
             path: 'board/:id',
             loader: requireAuth,
             Component: BoardContentPage,
+        },
+        {
+            path: 'account',
+            loader: requireAuth,
+            Component: AccountPage,
         }
         ]
     }

@@ -14,11 +14,13 @@ describe("Get User Details", () => {
     afterEach(() => jest.clearAllMocks())
 
     it("Should return the user if the data is correct", async () => {
-        mockUserModel.findOne.mockResolvedValue({ id: "1", name: "John Doe", email: "john.doe@example.com" } as any);
+        mockUserModel.findOne.mockResolvedValue({ id: "1", name: "John Doe", email: "john.doe@example.com", profileImage: "prof.png", backgroundImage: "bg.png" } as any);
         const result = await getUser({ user_id: "1" });
         expect(result.status).toBe(200);
         expect(result.user?.name).toBe("John Doe");
         expect(result.user?.email).toBe("john.doe@example.com");
+        expect(result.user?.profileImage).toBe("prof.png");
+        expect(result.user?.backgroundImage).toBe("bg.png");
         expect(result.message).toBe("User Found");
     })
 

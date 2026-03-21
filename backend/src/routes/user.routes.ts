@@ -13,6 +13,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import { updateUserValidationMiddleware } from "../validation/user.update.validation";
 import { deleteUserValidationMiddleware } from "../validation/user.delete.validation";
 import { validateLoginSchema } from "../validation/user.login.validation";
+import { upload } from "../middlewares/multer.middleware";
 
 const router = Router();
 
@@ -20,7 +21,7 @@ router.get('/', authMiddleware, getUser);
 router.post('/', userValidation, createUser);
 router.post('/login', validateLoginSchema, loginUser);
 router.post('/refresh-token', refereshToken);
-router.put('/', authMiddleware, updateUserValidationMiddleware, updateUser);
+router.put('/', authMiddleware, upload.fields([{ name: 'profileImage', maxCount: 1 }, { name: 'backgroundImage', maxCount: 1 }]), updateUserValidationMiddleware, updateUser);
 router.delete('/', authMiddleware, deleteUserValidationMiddleware, deleteUser);
 
 export default router

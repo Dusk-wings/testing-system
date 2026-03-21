@@ -2,7 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import z from "zod";
 
 export const updateUserValidation = z.object({
-    name: z.string().min(3).max(255),
+    name: z.string().min(3).max(255).optional(),
+    profileImage: z.string().optional(),
+    backgroundImage: z.string().optional()
 })
 
 export type UpdateUserDataType = z.infer<typeof updateUserValidation>

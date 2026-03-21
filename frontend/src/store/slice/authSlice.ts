@@ -4,8 +4,8 @@ interface User {
     _id: string;
     name: string;
     email: string;
-    avatar: string;
-    boardImage: string;
+    profileImage: string;
+    backgroundImage: string;
 }
 
 interface AuthState {
@@ -83,6 +83,7 @@ const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(loginUser.fulfilled, (state, action) => {
+            console.log(action.payload)
             state.user = action.payload;
             state.isAuth = true;
             state.error = null;

@@ -24,6 +24,16 @@ describe("updateUser", () => {
         expect(result.message).toBe("User Updated");
     })
 
+    it("should update user image fields", async () => {
+        mockUserModel.findOne.mockResolvedValue({ id: "1", name: "John Doe", email: "john.doe@example.com" } as any);
+        mockUserModel.updateOne.mockResolvedValue({} as any);
+
+        const result = await updateUser({ user_id: "1", profileImage: "prof.png", backgroundImage: "bg.png" });
+        expect(result.status).toBe(200);
+        expect(result.message).toBe("User Updated");
+        expect(mockUserModel.updateOne).toHaveBeenCalledWith({ _id: "1" }, { $set: { profileImage: "prof.png", backgroundImage: "bg.png" } });
+    })
+
     it("should throw error, if data supplied is incorrect", async () => {
         mockUserModel.findOne.mockResolvedValue(null);
         const result = await updateUser({ user_id: "1", name: "Richard Roe" });
