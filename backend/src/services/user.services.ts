@@ -91,6 +91,26 @@ export const loginUser = async (data: UserLoginData) => {
     }
 }
 
+export const logout = async (user_id: string) => {
+    try {
+        const doesUserExist = await UserModel.findOne({ _id: user_id })
+
+        if (!doesUserExist) {
+            return { status: 404, message: "User not found" }
+        }
+        try {
+            await RefereshTokenModel.deleteOne({ user_id: user_id })
+            return { status: 200, message: "User Logged Out" };
+        } catch (error) {
+            console.log(error);
+            return { status: 500, message: "Internal Server Error" }
+        }
+    } catch (error) {
+        console.log(error);
+        return { status: 500, message: "Internal Server Error" }
+    }
+}
+
 export const refereshToken = async (refresh_token: string) => {
     try {
         // const doesUserExist = await UserModel.findOne({ _id: user_id })

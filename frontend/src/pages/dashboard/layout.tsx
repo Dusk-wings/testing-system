@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, useNavigate } from "react-router";
 import Avatar from "../../components/ui/avatar";
 import { Suspense } from "react";
 // import logo from '../../../public/vite.svg'
@@ -6,16 +6,51 @@ import Button from "../../components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
 import Dialog from "../../components/ui/modal";
-import { closeHoverWindow, OpenFor } from "../../store/slice/hoverWindowSlice";
+import { closeHoverWindow, OpenFor, setOpen } from "../../store/slice/hoverWindowSlice";
 import BoardForm from "../../components/boardForm";
 import DeleteContent from "../../components/deleteContent";
 import ListForm from "../../components/listFrom";
 import CardForm from "../../components/cardForm";
+import { logOut } from "../../store/slice/authSlice";
 
 const BoardLayout = () => {
     const dialogState = useSelector((state: RootState) => state.hoverWindow);
     const { user } = useSelector((state: RootState) => state.auth);
     const dispatcher = useDispatch<AppDispatch>()
+    const navigator = useNavigate();
+
+    const preformLogout = async () => {
+        try {
+            const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000';
+            const response = await fetch(`${SERVER_PATH}/api/users/logout`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include"
+            });
+            const data = await response.json();
+            if (response.status === 200) {
+                dispatcher(logOut());
+                navigator('/auth/login');
+            } else {
+                dispatcher(setOpen({
+                    open: true,
+                    heading: "Error",
+                    headingDescription: data.message,
+                    type: OpenFor.ERROR
+                }))
+            }
+        } catch (error) {
+            console.error(error);
+            dispatcher(setOpen({
+                open: true,
+                heading: "Error",
+                headingDescription: "Network error, unable to logout",
+                type: OpenFor.ERROR
+            }))
+        }
+    }
 
     return (
         <div className="flex flex-col h-screen">
@@ -33,7 +68,11 @@ const BoardLayout = () => {
                                         alt={user?.name || "Avatar"}
                                     />
                                 </Link>
-                                <Button variant="danger">Logout</Button>
+                                <Button
+                                    variant="danger"
+                                    onClick={preformLogout}>
+                                    Logout
+                                </Button>
                             </div>
                         </li>
                     </ul>

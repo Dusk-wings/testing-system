@@ -5,7 +5,8 @@ import {
     getUser as getUserService,
     updateUser as updateUserService,
     deleteUser as deleteUserService,
-    loginUser as loginUserService
+    loginUser as loginUserService,
+    logout as logoutService
 } from "../services/user.services"
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -56,6 +57,29 @@ export const loginUser = async (req: Request, res: Response) => {
 
         return res.status(result.status).json({
             user_id: result.user_id,
+            message: result.message
+        })
+    }
+    return res.status(result.status).json({
+        message: result.message
+    })
+}
+
+export const logout = async (req: Request, res: Response) => {
+    const user_id = req.user?.id;
+    const result = await logoutService(user_id)
+    if (result.status === 200) {
+        res.clearCookie('refresh_token', {
+            httpOnly: true,
+            secure: false,
+            // sameSite: 'strict',
+        });
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            secure: false,
+            // sameSite: 'strict',
+        });
+        return res.status(result.status).json({
             message: result.message
         })
     }
