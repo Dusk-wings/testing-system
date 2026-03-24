@@ -34,7 +34,7 @@ function ContentCard({
 
     return (
         // <Link to={to || "#"} className="cursor-pointer">
-        <Card className={`dark:bg-gray-800/50 bg-amber-400/50 hover:bg-blend-overlay transition-all duration-300 ${className} grid grid-rows-3  bg-[url('${contentImage}')] bg-cover bg-center`}>
+        <Card className={`dark:bg-gray-800/50 bg-amber-400/50 hover:bg-blend-overlay transition-all duration-300 ${className} grid grid-rows-3  bg-[url('${contentImage}')] bg-cover bg-center`} data-testid={contentHeading}>
             <CardHeader className="dark:text-white text-black">
                 <h2 className="text-xl font-semibold">
                     {contentHeading}
@@ -52,21 +52,40 @@ function ContentCard({
                 </p>
             </CardBody>
             <CardFooter className="flex items-center justify-between gap-2">
-                <Button
-                    variant="outline"
-                    className="dark:text-white text-black"
-                    onClick={() => dispatcher(setOpen({
-                        open: true,
-                        heading: 'Edit Board',
-                        headingDescription: "Enter the details to update",
-                        type: OpenFor.BOARD_UPDATION,
-                        data: {
-                            id: id
-                        }
-                    }))}
-                >
-                    Edit
-                </Button>
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        className="dark:text-white text-black"
+                        onClick={() => dispatcher(setOpen({
+                            open: true,
+                            heading: 'Edit Board',
+                            headingDescription: "Enter the details to update",
+                            type: OpenFor.BOARD_UPDATION,
+                            data: {
+                                id: id
+                            }
+                        }))}
+                        data-testid={`edit-board-${contentHeading}`}
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        variant="danger"
+                        className="dark:text-white text-black"
+                        onClick={() => dispatcher(setOpen({
+                            open: true,
+                            heading: 'Delete Board',
+                            headingDescription: `Are you sure you want to delete "${contentHeading}"?`,
+                            type: OpenFor.BOARD_DELETION,
+                            data: {
+                                id: id
+                            }
+                        }))}
+                        data-testid={`delete-board-${contentHeading}`}
+                    >
+                        Delete
+                    </Button>
+                </div>
                 <Button
                     variant="primary"
                     className="dark:text-white text-black"

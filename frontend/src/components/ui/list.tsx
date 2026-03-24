@@ -79,11 +79,12 @@ function List({ title, cards, list_id, board_id, operation, position, totalLists
             className="flex flex-col gap-2 min-h-fit  max-h-96 w-96 bg-purple-200 rounded-xl p-4 flex-shrink-0"
             aria-label="list-content"
             role="region"
+            data-testid={title}
         >
             <div className="flex justify-between items-center">
                 <h2>{title}</h2>
                 <div id="button-section" className="flex gap-1">
-                    <Button onClick={operation}>
+                    <Button onClick={operation} data-testid="add-card">
                         <Plus />
                     </Button>
                     <OptionsMenu

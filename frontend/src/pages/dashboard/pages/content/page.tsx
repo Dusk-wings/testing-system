@@ -81,7 +81,9 @@ function BoardContentPage() {
                   position: (boardData.board?.lists.length ?? 0) + 1
                 }
               }))
-            }}>
+            }}
+              data-testid="create-list"
+            >
               <Plus />
             </Button>
           </div>

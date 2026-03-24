@@ -15,7 +15,7 @@ const router = Router()
 router.get("/", authMiddleware, getBoard)
 router.post("/", authMiddleware, boardValidator, createBoard)
 router.put("/", authMiddleware, boardUpdateValidator, updateBoard)
-router.delete("/", authMiddleware, deleteBoard)
+router.delete("/:id", authMiddleware, deleteBoard)
 router.get("/:id", authMiddleware, getBoardById)
 
 export default router

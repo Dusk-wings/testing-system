@@ -91,7 +91,10 @@ export const deleteBoard = async (data: { user_id: string, board_id: string }) =
         await Board.deleteOne({ user_id: data.user_id, _id: data.board_id })
         return {
             status: 200,
-            message: "Board deleted successfully"
+            message: "Board deleted successfully",
+            data: {
+                _id: data.board_id
+            }
         }
     } catch (error) {
         console.log(error)

@@ -30,7 +30,9 @@ function BoardPage() {
             headingDescription: "Create a new board",
             type: OpenFor.BOARD_CREATION,
           }));
-        }}>
+        }}
+          data-testid="create-board"
+        >
           Create
         </Button>
       </div>

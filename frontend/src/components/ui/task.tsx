@@ -112,6 +112,7 @@ function Task({
             className="flex flex-col gap-4 bg-purple-100 rounded-xl p-2"
             aria-label="task-content"
             role="region"
+            data-testid={`task-${heading}`}
         >
             <section id="content" className="flex justify-between items-start">
                 <div id="test-contnet">

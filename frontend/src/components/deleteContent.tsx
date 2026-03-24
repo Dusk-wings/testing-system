@@ -5,6 +5,7 @@ import { closeHoverWindow, setOpen } from "../store/slice/hoverWindowSlice";
 import ModalFooter from "./ui/modalFooter";
 import type { RootState } from "../store/store";
 import { removeCard, removeList } from "../store/slice/currentData";
+import { removeBoard } from "../store/slice/boardSlice";
 import { useNavigate } from "react-router";
 
 
@@ -55,6 +56,8 @@ function DeleteContent() {
                     dispatcher(removeList(data.data._id))
                 } else if (hoverState.type == 'CARD_DELETION') {
                     dispatcher(removeCard({ list_id: data.data.list_id, card_id: data.data._id }))
+                } else if (hoverState.type == 'BOARD_DELETION') {
+                    dispatcher(removeBoard(data.data._id))
                 } else {
                     navigator("/dashboard", { replace: true })
                 }
