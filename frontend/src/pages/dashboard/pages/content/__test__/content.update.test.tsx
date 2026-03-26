@@ -177,6 +177,8 @@ describe("Editing the list and the card content", () => {
         const updateButtons = await screen.findAllByRole('button', { name: "form-operation-button", hidden: true });
         fireEvent.click(updateButtons[0]);
 
+        // screen.debug()
+
 
         await waitFor(async () => {
             listSection = await screen.findByRole('region', { name: "Board Content" });

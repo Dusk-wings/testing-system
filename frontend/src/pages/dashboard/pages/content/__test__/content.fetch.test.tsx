@@ -11,6 +11,10 @@ import type { Card } from "../../../../../lib/types/board";
 const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
 const BOARD_ID = 'borad_id123'
 
+const today = new Date();
+const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1);
+
 export const cardData: Card[] = [{
     _id: 'card_id123',
     title: 'Card 1',
@@ -20,7 +24,7 @@ export const cardData: Card[] = [{
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     status: 'Todo',
-    deadline: new Date().toISOString(),
+    deadline: tomorrow.toISOString(),
     user_id: 'user_id123',
     board_id: BOARD_ID
 }, {
@@ -32,7 +36,7 @@ export const cardData: Card[] = [{
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     status: 'Todo',
-    deadline: new Date().toISOString(),
+    deadline: tomorrow.toISOString(),
     user_id: 'user_id123',
     board_id: BOARD_ID
 }, {
@@ -44,7 +48,7 @@ export const cardData: Card[] = [{
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     status: 'Todo',
-    deadline: new Date().toISOString(),
+    deadline: tomorrow.toISOString(),
     user_id: 'user_id123',
     board_id: BOARD_ID
 }]
