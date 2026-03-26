@@ -1,6 +1,7 @@
 import List from "@src/models/list.model"
 import Board from "@src/models/board.model"
 import { createList } from "@src/services/list.services"
+import mongoose from "mongoose"
 
 jest.mock('@src/models/list.model', () => ({
     __esModule: true,
@@ -17,8 +18,20 @@ jest.mock('@src/models/board.model', () => ({
     }
 }))
 
+jest.mock('mongoose', () => {
+    const actualMongoose = jest.requireActual('mongoose')
+    return {
+        ...actualMongoose,
+        Types: {
+            ...actualMongoose.Types,
+            ObjectId: jest.fn()
+        }
+    }
+})
+
 const mockedListModel = List as jest.Mocked<typeof List>
 const mockedBoardModel = Board as jest.Mocked<typeof Board>
+const mockedObjectId = jest.mocked(mongoose.Types.ObjectId)
 
 describe("List Service Create", () => {
     const NOW = 1_700_000_000_000;
@@ -44,7 +57,7 @@ describe("List Service Create", () => {
             visibility: "Public"
         } as any)
         mockedListModel.countDocuments.mockResolvedValue(0)
-
+        mockedObjectId.mockReturnValue("1" as any)
         const data = {
             user_id: "1",
             title: "List 1",
@@ -55,12 +68,14 @@ describe("List Service Create", () => {
 
         expect(result.status).toBe(201)
         expect(result.message).toBe("List created successfully");
+        // mockedObjectId.mockImplementation((id) => id)
         expect(mockedListModel.create).toHaveBeenCalledWith({
-            board_id: "1",
+            board_id: new mongoose.Types.ObjectId("1"),
             title: "List 1",
             position: 1,
             created_at: NOW,
             updated_at: NOW,
+            user_id: new mongoose.Types.ObjectId("1")
         })
     })
 

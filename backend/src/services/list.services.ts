@@ -11,7 +11,7 @@ export const createList = async ({ title, board_id: boardId, user_id: userID }: 
             _id: board_id,
             user_id: user_id
         });
-        console.log(doesUserOwnsTheBoard)
+
         if (!doesUserOwnsTheBoard) {
             return { status: 403, message: "You don't own this board" };
         }
