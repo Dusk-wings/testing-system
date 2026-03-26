@@ -6,7 +6,7 @@ import { http, HttpResponse } from "msw"
 import { Provider } from "react-redux"
 import store from "../../../../../store/store"
 
-const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH
+const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000';
 
 describe('Account Page Render', () => {
     beforeEach(() => {

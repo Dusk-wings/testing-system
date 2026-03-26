@@ -8,7 +8,7 @@ import { boardData } from "./content.fetch.test";
 import store from "../../../../../store/store";
 
 
-const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
+const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000';
 const BOARD_ID = 'borad_id123'
 
 beforeEach(() => {

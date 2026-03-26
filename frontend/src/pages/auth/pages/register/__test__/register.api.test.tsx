@@ -8,7 +8,7 @@ import { logOut } from "../../../../../store/slice/authSlice";
 import { Provider } from "react-redux";
 
 
-const SERVER_PATH = process.env.VITE_BACKEND_PATH;
+const SERVER_PATH = process.env.VITE_BACKEND_PATH || 'http://localhost:3000';
 const EMAIL_ADDRESS = 'jhon.doe.test@email.com'
 const PASSWORD = 'password123!P'
 const NAME = 'Jhon Doe'

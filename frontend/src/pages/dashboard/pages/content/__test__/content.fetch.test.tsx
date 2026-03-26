@@ -8,7 +8,7 @@ import { Provider } from "react-redux";
 import store from "../../../../../store/store";
 import type { Card } from "../../../../../lib/types/board";
 
-const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
+const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000';
 const BOARD_ID = 'borad_id123'
 
 const today = new Date();
