@@ -66,7 +66,7 @@ export const updateTask = async (req: Request, res: Response) => {
 
 export const deleteTask = async (req: Request, res: Response) => {
     const user_id = req.user?.id
-    const { id } = req.params
+    const id = String(req.params.id)
     const result = await deleteTaskService({ user_id: user_id, task_id: id })
     if (result.status === 200) {
         return res.status(result.status).json({

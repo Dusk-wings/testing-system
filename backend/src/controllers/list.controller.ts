@@ -42,7 +42,7 @@ export const updateList = async (req: Request, res: Response) => {
 export const deleteList = async (req: Request, res: Response) => {
     try {
         const user_id = req.user?.id;
-        const { list_id } = req.params
+        const list_id = String(req.params.list_id)
         const list = await deleteListService({ user_id, list_id })
         res.status(list.status).json({
             message: list.message,

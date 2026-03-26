@@ -60,7 +60,7 @@ export const updateBoard = async (req: Request, res: Response) => {
 export const deleteBoard = async (req: Request, res: Response) => {
     try {
         const user_id = req.user?.id;
-        const board_id = req.params.id
+        const board_id = String(req.params.id)
         const board = await deleteBoardService({ user_id, board_id })
         res.status(board.status).json({
             message: board.message,
@@ -77,7 +77,7 @@ export const deleteBoard = async (req: Request, res: Response) => {
 export const getBoardById = async (req: Request, res: Response) => {
     try {
         const user_id = req.user?.id;
-        const board_id = req.params.id
+        const board_id = String(req.params.id)
         const board = await getBoardByIdService({ user_id, board_id })
         res.status(board.status).json({
             message: board.message,
