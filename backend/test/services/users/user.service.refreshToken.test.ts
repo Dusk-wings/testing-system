@@ -49,13 +49,22 @@ describe("Referesh Token Service", () => {
     });
 
     it("should create a referesh token, if user data is valid", async () => {
-        mockUserModel.findOne.mockResolvedValue({ id: '1' } as any);
-        mockRefreshTokenModel.findOne.mockResolvedValue({ id: "1", token: "fake-refresh-token", expires_at: NOW + 1000 * 60 * 60 * 24 * 4 } as any);
+        mockUserModel.findOne.mockResolvedValue({
+            id: '1',
+            name: 'John Doe',
+            email: 'jon.doe@example.com'
+        } as any);
+        mockRefreshTokenModel.findOne.mockResolvedValue({
+            id: "1",
+            token: "fake-refresh-token",
+            user_id: "1",
+            expires_at: NOW + 1000 * 60 * 60 * 24 * 4
+        } as any);
         mockRefreshTokenModel.updateOne.mockResolvedValue({
             token: "fake-refresh-token",
             expires_at: NOW + 1000 * 60 * 60 * 24 * 4
         } as any);
-        const result = await refereshToken("1", "fake-refresh-token");
+        const result = await refereshToken("fake-refresh-token");
         expect(result.status).toBe(200);
         expect(result.user_id).toBe("1");
         expect(result.message).toBe("Token Issued Again");
@@ -64,19 +73,11 @@ describe("Referesh Token Service", () => {
         expect(result.access_token_expires_in).toBeDefined();
     })
 
-    it("should throw error if user not found", async () => {
-        mockUserModel.findOne.mockResolvedValue(null);
-        const response = await refereshToken("1", "fake-refresh-token");
-        expect(response).toEqual({
-            message: "User not found",
-            status: 404
-        });
-    })
 
     it("should throw error if token does not exist", async () => {
         mockUserModel.findOne.mockResolvedValue({ id: "1" } as any);
         mockRefreshTokenModel.findOne.mockResolvedValue(null);
-        const response = await refereshToken("1", "fake-refresh-token");
+        const response = await refereshToken("fake-refresh-token");
         expect(response).toEqual({
             message: "Token not found",
             status: 404
@@ -86,7 +87,7 @@ describe("Referesh Token Service", () => {
     it("should throw error if token expired", async () => {
         mockUserModel.findOne.mockResolvedValue({ id: "1" } as any);
         mockRefreshTokenModel.findOne.mockResolvedValue({ id: "1", token: "fake-refresh-token", expires_at: NOW - 1000 } as any);
-        const response = await refereshToken("1", "fake-refresh-token");
+        const response = await refereshToken("fake-refresh-token");
         expect(response).toEqual({
             message: "Token expired",
             status: 404

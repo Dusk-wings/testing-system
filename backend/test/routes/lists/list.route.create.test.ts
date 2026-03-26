@@ -34,7 +34,7 @@ describe("POST /api/lists", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).post("/api/lists/create").send({
+        const response = await request(app).post("/api/lists").send({
             title: "List 1",
             board_id: "1",
         }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
@@ -62,7 +62,7 @@ describe("POST /api/lists", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).post("/api/lists/create").send({
+        const response = await request(app).post("/api/lists").send({
             title: "List 1",
             board_id: "1",
         }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
@@ -85,7 +85,7 @@ describe("POST /api/lists", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).post("/api/lists/create").send({
+        const response = await request(app).post("/api/lists").send({
             title: "",
             board_id: "1",
         }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])

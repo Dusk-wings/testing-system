@@ -34,7 +34,7 @@ describe("DELETE /api/lists/:list_id", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).delete("/api/lists/delete/1").set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
+        const response = await request(app).delete("/api/lists/1").set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
 
         expect(response.body.message).toBe("List deleted successfully");
         expect(response.status).toBe(200);
@@ -58,7 +58,7 @@ describe("DELETE /api/lists/:list_id", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).delete("/api/lists/delete/1").set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
+        const response = await request(app).delete("/api/lists/1").set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
 
         expect(response.body.message).toBe("List not found");
         expect(response.status).toBe(404);

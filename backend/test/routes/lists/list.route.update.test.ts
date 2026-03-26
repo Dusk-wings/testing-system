@@ -34,7 +34,7 @@ describe("PUT /api/lists", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).put("/api/lists/update").send({
+        const response = await request(app).put("/api/lists").send({
             list_id: "1",
             title: "List 1",
             board_id: "1",
@@ -64,7 +64,7 @@ describe("PUT /api/lists", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).put("/api/lists/update").send({
+        const response = await request(app).put("/api/lists").send({
             list_id: "1",
             title: "List 1",
             board_id: "1",
@@ -89,7 +89,7 @@ describe("PUT /api/lists", () => {
 
         const [accessToken] = accessTokenGenrator("1");
 
-        const response = await request(app).put("/api/lists/update").send({
+        const response = await request(app).put("/api/lists").send({
             list_id: "1",
             board_id: "1",
         }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])

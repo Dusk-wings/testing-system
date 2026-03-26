@@ -120,7 +120,6 @@ export const refereshToken = async (refresh_token: string) => {
         // }
 
         const doesTokenExist = await RefereshTokenModel.findOne({ token: refresh_token })
-        console.log("Token in db", doesTokenExist)
         if (!doesTokenExist) {
             return { status: 404, message: "Token not found" }
         }

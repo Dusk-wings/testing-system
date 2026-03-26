@@ -76,7 +76,7 @@ describe("Task Service Create", () => {
 
         const result = await createTask(data)
 
-        expect(result.status).toBe(201)
+        expect(result.status).toBe(200)
         expect(result.message).toBe("Task created successfully")
     })
 

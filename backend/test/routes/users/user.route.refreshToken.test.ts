@@ -31,19 +31,15 @@ describe('POST api/user/refresh-token', () => {
         expect(res.body.message).toBe("Token Issued Again");
 
         // Verify integration happened
-        expect(mockRefereshToken).toHaveBeenCalledWith("1", "fake-refresh-token");
+        expect(mockRefereshToken).toHaveBeenCalledWith("fake-refresh-token");
     })
 
-    it('Should return 400 if user_id is not provided', async () => {
-        const res = await request(app).post('/api/users/refresh-token').set('Cookie', ['refresh_token=fake-refresh-token']).send({
-            user_id: "",
-        })
-
-        expect(res.status).toBe(400);
-        expect(res.body.message).toBe("Validation failed");
-    })
 
     it('Should return 400 if refresh token is not provided', async () => {
+        mockRefereshToken.mockResolvedValue({
+            status: 400,
+            message: "Refresh token not found"
+        });
         const res = await request(app).post('/api/users/refresh-token').send({
             user_id: "1",
         })

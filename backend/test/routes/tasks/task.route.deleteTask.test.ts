@@ -35,9 +35,7 @@ describe("DELETE /api/tasks", () => {
 
         const [accessToken] = accessTokenGenrator("1")
 
-        const response = await request(app).delete('/api/tasks').send({
-            task_id: "1"
-        }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
+        const response = await request(app).delete('/api/tasks/1').set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
 
         console.log(response.body)
 
@@ -64,9 +62,7 @@ describe("DELETE /api/tasks", () => {
 
         const [accessToken] = accessTokenGenrator("1")
 
-        const response = await request(app).delete('/api/tasks').send({
-            task_id: "1"
-        }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
+        const response = await request(app).delete('/api/tasks/1').set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
 
         console.log(response.body)
 

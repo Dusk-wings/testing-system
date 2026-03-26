@@ -38,7 +38,8 @@ describe('POST /api/tasks', () => {
             description: "Description 1",
             deadline: new Date("2022-01-01").toISOString(),
             board_id: "1",
-            status: "Todo"
+            status: "Todo",
+            list_id: "1"
         }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
 
         expect(response.status).toBe(404)
@@ -50,7 +51,9 @@ describe('POST /api/tasks', () => {
             description: "Description 1",
             deadline: new Date("2022-01-01").toISOString(),
             board_id: "1",
-            status: "Todo"
+            status: "Todo",
+            list_id: "1"
+
         })
     })
 
@@ -70,7 +73,8 @@ describe('POST /api/tasks', () => {
             description: "Description 1",
             deadline: new Date("2022-01-01").toISOString(),
             board_id: "1",
-            status: "Todo"
+            status: "Todo",
+            list_id: "1"
         }).set('Cookie', ['refresh_token=123', `access_token=${accessToken}`])
 
         expect(response.status).toBe(200)
@@ -82,7 +86,8 @@ describe('POST /api/tasks', () => {
             description: "Description 1",
             deadline: new Date("2022-01-01").toISOString(),
             board_id: "1",
-            status: "Todo"
+            status: "Todo",
+            list_id: "1"
         })
     })
 })

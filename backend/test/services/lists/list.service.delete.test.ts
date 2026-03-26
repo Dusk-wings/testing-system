@@ -1,5 +1,6 @@
 import List from "@src/models/list.model";
 import { deleteList } from "@src/services/list.services";
+import mongoose from "mongoose";
 
 jest.mock('@src/models/list.model', () => ({
     __esModule: true,
@@ -9,6 +10,19 @@ jest.mock('@src/models/list.model', () => ({
 }));
 
 const mockedListModel = List as jest.Mocked<typeof List>;
+
+jest.mock('mongoose', () => {
+    const actualMongoose = jest.requireActual('mongoose');
+    return {
+        ...actualMongoose,
+        Types: {
+            ...actualMongoose.Types,
+            ObjectId: jest.fn()
+        }
+    };
+});
+
+const mockedObjectId = jest.mocked(mongoose.Types.ObjectId);
 
 describe("List Service Delete", () => {
     it("should delete a list, if provided data is correct", async () => {
@@ -20,6 +34,7 @@ describe("List Service Delete", () => {
             created_at: Date.now(),
             updated_at: Date.now(),
         } as any);
+        mockedObjectId.mockReturnValue("1" as any);
 
         const data = {
             list_id: "1",

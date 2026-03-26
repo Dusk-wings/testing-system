@@ -14,7 +14,7 @@ export const createTask = async (data: {
 }) => {
     try {
 
-        console.log("User Id : ", data.user_id, "Title : ", data.title, "Description : ", data.description, "Deadline : ", data.deadline, "Board Id : ", data.board_id, "Status : ", data.status, "List Id : ", data.list_id)
+        // console.log("User Id : ", data.user_id, "Title : ", data.title, "Description : ", data.description, "Deadline : ", data.deadline, "Board Id : ", data.board_id, "Status : ", data.status, "List Id : ", data.list_id)
         if (!data.user_id ||
             !data.title ||
             !data.deadline ||
@@ -68,11 +68,11 @@ export const createTask = async (data: {
                 created_at: Date.now(),
                 updated_at: Date.now(),
             })
-            console.log(task)
+            // console.log(task)
             return {
                 status: 200,
                 message: "Task created successfully",
-                data: task.toObject()
+                data: task
             }
         } catch (error) {
             console.log(error)
@@ -142,15 +142,21 @@ export const updateTask = async (data: { user_id: string, task_id: string, title
             const task = await Task.findOneAndUpdate(
                 { user_id: data.user_id, _id: data.task_id },
                 { $set: updatedData },
-                { runValidators: true, new: true }
+                { runValidators: true, new: true, lean: true }
             )
+            if (!task) {
+                return {
+                    status: 404,
+                    message: "Task not found",
+                    data: null
+                };
+            }
+
             return {
                 status: 200,
                 message: "Task updated successfully",
-                data: {
-                    ...task?.toObject(),
-                }
-            }
+                data: task
+            };
         } catch (error) {
             console.log(error)
             return { status: 500, message: "Internal Server Error" }

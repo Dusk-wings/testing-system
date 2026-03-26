@@ -1,5 +1,6 @@
 import List from "@src/models/list.model"
 import { updateList } from "@src/services/list.services"
+import mongoose from "mongoose"
 
 jest.mock('@src/models/list.model', () => ({
     __esModule: true,
@@ -10,8 +11,21 @@ jest.mock('@src/models/list.model', () => ({
     }
 }))
 
+jest.mock('mongoose', () => {
+    const actualMongoose = jest.requireActual('mongoose');
+    return {
+        ...actualMongoose,
+        Types: {
+            ...actualMongoose.Types,
+            ObjectId: jest.fn()
+        }
+    };
+});
 
-const mockedListModel = List as jest.Mocked<typeof List>
+
+const mockedListModel = List as jest.Mocked<typeof List>;
+
+const mockedObjectId = jest.mocked(mongoose.Types.ObjectId);
 
 describe("List Service Update", () => {
     const NOW = 1_700_000_000_000;
@@ -29,6 +43,7 @@ describe("List Service Update", () => {
             updated_at: NOW,
         } as any);
         mockedListModel.findOneAndUpdate.mockResolvedValue({
+            _id: "list_id",
             user_id: "user_id",
             title: "List 1",
             position: 2,
@@ -37,7 +52,7 @@ describe("List Service Update", () => {
             updated_at: NOW,
         } as any);
         mockedListModel.updateMany.mockResolvedValue({ modifiedCount: 1 } as any);
-
+        mockedObjectId.mockReturnValue("list_id" as any);
         const result = await updateList({
             user_id: "user_id",
             list_id: "list_id",
@@ -52,7 +67,7 @@ describe("List Service Update", () => {
         expect(mockedListModel.findOneAndUpdate).toHaveBeenCalledWith(
             { _id: "list_id", user_id: "user_id" },
             { $set: { title: "List 1", position: 2, updated_at: NOW } },
-            { runValidators: true }
+            { runValidators: true, new: true }
         )
         expect(mockedListModel.updateMany).toHaveBeenCalledWith(
             {
