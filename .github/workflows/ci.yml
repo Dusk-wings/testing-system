@@ -40,7 +40,7 @@ jobs:
           cd frontend
           npm test
         env:
-          VITE_BACKEND_PATH: http://test
+          VITE_BACKEND_PATH: http://localhost:3000
         
       - name: Install Playwright
         run: |

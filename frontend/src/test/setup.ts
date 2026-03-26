@@ -9,7 +9,7 @@ class ResizeObserverMock {
 
 global.ResizeObserver = ResizeObserverMock as any
 
-beforeAll(() => server.listen())
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 
 afterEach(() => server.resetHandlers())
 
