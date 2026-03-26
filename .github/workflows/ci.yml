@@ -39,6 +39,8 @@ jobs:
         run: |
           cd frontend
           npm test
+        env:
+          VITE_BACKEND_PATH: http://test
         
       - name: Install Playwright
         run: |
