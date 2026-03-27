@@ -129,7 +129,7 @@ describe("Register API", () => {
         fireEvent.change(confirmPasswordInput, { target: { value: PASSWORD } })
         fireEvent.click(submitButton)
 
-        expect(await screen.findByText('Internal Server Error')).toBeInTheDocument();
+        expect(await screen.findByTestId('root-error-message')).toBeInTheDocument();
 
     })
 })

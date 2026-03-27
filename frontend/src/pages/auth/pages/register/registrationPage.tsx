@@ -71,7 +71,7 @@ function RegistrationPage() {
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     {errors.root && (
-                        <p className="text-red-500 text-xs">
+                        <p className="text-red-500 text-xs" data-testid='root-error-message'>
                             {errors.root.message}
                         </p>
                     )}
