@@ -72,7 +72,7 @@ describe('Board Data Loading', () => {
         const boardRegion = await screen.findByRole('region', { name: 'Boards' })
 
         expect(
-            await within(boardRegion).findByText("No boards found, start by creating a board")
+            await within(boardRegion).findByTestId('no-boards')
         ).toBeInTheDocument()
     })
 
@@ -246,7 +246,6 @@ describe('Board Data Loading', () => {
         )
 
         const newBoardSection = await screen.findByRole('region', { name: 'Boards' })
-        screen.debug()
 
         expect(await within(newBoardSection).findByText('New Title')).toBeInTheDocument()
         expect(await within(newBoardSection).findByText('New Description')).toBeInTheDocument()

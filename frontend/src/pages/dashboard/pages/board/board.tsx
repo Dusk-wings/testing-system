@@ -56,7 +56,7 @@ function BoardPage() {
             <p className="text-center text-red-500">{error}</p>
           </section>
         ) : boardData?.length === 0 ? (
-          <p className="text-center text-gray-500">
+          <p data-testid="no-boards" className="text-center text-gray-500">
             No boards found, start by creating a board
           </p>
         ) : (

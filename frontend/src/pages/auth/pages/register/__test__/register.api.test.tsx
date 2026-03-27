@@ -8,7 +8,7 @@ import { logOut } from "../../../../../store/slice/authSlice";
 import { Provider } from "react-redux";
 
 
-const SERVER_PATH = process.env.VITE_BACKEND_PATH || 'http://localhost:3000';
+const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000';
 const EMAIL_ADDRESS = 'jhon.doe.test@email.com'
 const PASSWORD = 'password123!P'
 const NAME = 'Jhon Doe'
@@ -20,10 +20,15 @@ describe("Register API", () => {
 
     it("Should register a new user", async () => {
         server.use(
+            http.get(`${SERVER_PATH}/api/boards`, async () => {
+                return HttpResponse.json({ message: 'success', data: [] }, { status: 200 })
+            })
+        )
+
+        server.use(
             http.post(`${SERVER_PATH}/api/users`, () => {
                 return HttpResponse.json(
-                    { message: 'User Registered' },
-                    { status: 201 }
+                    { message: 'User Registered' }, { status: 200 }
                 )
             })
         )
@@ -48,8 +53,6 @@ describe("Register API", () => {
         fireEvent.change(emailInput, { target: { value: EMAIL_ADDRESS } })
         fireEvent.change(passwordInput, { target: { value: PASSWORD } })
         fireEvent.change(confirmPasswordInput, { target: { value: PASSWORD } })
-        fireEvent.click(submitButton)
-
         server.use(
             http.get(`${SERVER_PATH}/api/users`, () => {
                 return HttpResponse.json({
@@ -64,6 +67,7 @@ describe("Register API", () => {
                 }, { status: 200 })
             })
         )
+        fireEvent.click(submitButton)
 
         expect(await screen.findByText('Boards')).toBeInTheDocument();
     })

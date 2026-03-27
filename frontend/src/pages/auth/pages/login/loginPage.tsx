@@ -42,6 +42,7 @@ function LoginPage() {
             })
 
             const result = await response.json()
+
             if (response.ok) {
                 navigator('/dashboard', { replace: true })
             } else {

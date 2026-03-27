@@ -12,12 +12,18 @@ const EMAIL_ADDRESS = 'jhon.doe.test@email.com'
 
 describe('Login Form Submission API', () => {
     beforeEach(() => {
-        store.dispatch(logOut())
+        store.dispatch(logOut());
+
+        server.use(
+            http.post(`${import.meta.env.VITE_BACKEND_PATH}/api/users/refresh-token`, () => {
+                return HttpResponse.json({ message: 'User Not Found' }, { status: 401 })
+            })
+        )
     })
 
     it('should submit the form and redirect to dashboard if successful', async () => {
         server.use(
-            http.post('http://localhost:3000/api/users/login', () => {
+            http.post(`${import.meta.env.VITE_BACKEND_PATH}/api/users/login`, () => {
                 return HttpResponse.json({ message: 'User Found' }, { status: 200 })
             })
         )
@@ -42,7 +48,7 @@ describe('Login Form Submission API', () => {
         fireEvent.click(submitButton)
 
         server.use(
-            http.get('http://localhost:3000/api/users', () => {
+            http.get(`${import.meta.env.VITE_BACKEND_PATH}/api/users`, () => {
                 return HttpResponse.json({
                     user: {
                         _id: '1',
@@ -55,6 +61,10 @@ describe('Login Form Submission API', () => {
                 }, { status: 200 })
             })
         )
+
+        server.use(http.get(`${import.meta.env.VITE_BACKEND_PATH}/api/boards`, () => {
+            return HttpResponse.json({ message: 'Boards Found', boards: [] }, { status: 200 })
+        }))
 
         expect(await screen.findByText('Boards')).toBeInTheDocument();
     })
