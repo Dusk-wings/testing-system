@@ -41,7 +41,23 @@ jobs:
           npm test
         env:
           VITE_BACKEND_PATH: http://localhost:3000
-        
+
+      - name: Run Front-end Dev
+        run: |
+          cd frontend
+          npm run dev &
+
+      - name: Run Back-end Dev
+        run: |
+          cd backend
+          npm run dev &
+      
+      - name: Wait for Front-end Dev to Start
+        run: npx wait-on http://localhost:5173
+
+      - name: Wait for Back-end Dev to Start
+        run: npx wait-on http://localhost:3000
+
       - name: Install Playwright
         run: |
           cd frontend
