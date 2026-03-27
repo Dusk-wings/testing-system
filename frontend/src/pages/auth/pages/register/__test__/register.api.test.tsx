@@ -86,7 +86,9 @@ describe("Register API", () => {
         })
 
         render(
-            <RouterProvider router={router} />
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
         )
 
         const nameInput = await screen.findByLabelText(/^name$/i)
@@ -116,7 +118,9 @@ describe("Register API", () => {
         })
 
         render(
-            <RouterProvider router={router} />
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
         )
 
         const nameInput = await screen.findByLabelText(/^name$/i)
