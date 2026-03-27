@@ -15,15 +15,17 @@ const NAME = 'Jhon Doe'
 
 describe("Register API", () => {
     beforeEach(() => {
-        store.dispatch(logOut())
-    })
+        store.dispatch(logOut());
 
-    it("Should register a new user", async () => {
         server.use(
             http.get(`${SERVER_PATH}/api/boards`, async () => {
                 return HttpResponse.json({ message: 'success', data: [] }, { status: 200 })
             })
         )
+
+    })
+
+    it("Should register a new user", async () => {
 
         server.use(
             http.post(`${SERVER_PATH}/api/users`, () => {
