@@ -27,6 +27,12 @@ describe('Dashboard Router', () => {
     })
 
     it('should render dashboard page', async () => {
+        server.use(
+            http.get(`${SERVER_PATH}/api/boards`, async () => {
+                return HttpResponse.json({ message: 'success', data: [] }, { status: 200 })
+            })
+        )
+
         const router = createMemoryRouter(routerInstance, {
             initialEntries: ['/dashboard']
         })
