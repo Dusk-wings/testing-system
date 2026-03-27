@@ -38,7 +38,7 @@ jobs:
       - name: Run Front-end Tests
         run: |
           cd frontend
-          npm test
+          npx vitest run --maxWorkers=1
         env:
           VITE_BACKEND_PATH: http://localhost:3000
 
