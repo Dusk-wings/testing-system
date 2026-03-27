@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run --sequence",
+    "test": "vitest run --maxWorkers=1",
     "test:ui": "vitest run --ui",
     "test:coverage": "vitest run --coverage"
   },
