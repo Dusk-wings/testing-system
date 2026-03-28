@@ -44,7 +44,7 @@ packages/react-devtools-timeline/dist
 
 # npm
 node_modules
-package-lock.json
+# package-lock.json removed to allow caching in CI
 npm-shrinkwrap.json
 *.log
 *.gz
@@ -127,7 +127,7 @@ yarn-error.log
 tests/baselines/reference/dt
 .failed-tests
 TEST-results.xml
-package-lock.json
+# package-lock.json removed to allow caching in CI
 .eslintcache
 *v8.log
 /lib/
