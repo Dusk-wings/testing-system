@@ -42,6 +42,17 @@ jobs:
         env:
           VITE_BACKEND_PATH: http://localhost:3000
 
+      - name: Setup environment variables
+        run: |
+          # backend
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> backend/.env
+          echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> backend/.env
+          echo "PORT=${{ secrets.SERVER_PORT }}" >> backend/.env
+
+          # frontend (Vite!)
+          echo "VITE_BACKEND_PATH=${{ secrets.VITE_BACKEND_PATH }}" >> frontend/.env
+
       - name: Install Playwright
         run: |
           cd frontend
