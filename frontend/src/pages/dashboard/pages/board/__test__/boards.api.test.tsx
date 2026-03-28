@@ -5,27 +5,14 @@ import { routerInstance } from '../../../../../router/router'
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import store from '../../../../../store/store'
+import { resetBoardState } from '../../../../../store/slice/boardSlice'
 
 const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000';
-export const BOARD_DATA_RESPONSE = [{
-    _id: '1',
-    title: 'Board 1',
-    description: 'Description 1',
-    visibility: 'Public',
-    created_at: '2022-01-01T00:00:00.000Z',
-    updated_at: '2022-01-01T00:00:00.000Z'
-},
-{
-    _id: '2',
-    title: 'Board 2',
-    description: 'Description 2',
-    visibility: 'Public',
-    created_at: '2022-01-01T00:00:00.000Z',
-    updated_at: '2022-01-01T00:00:00.000Z'
-}]
+import { BOARD_DATA_RESPONSE } from './boards.data'
 
 describe('Board Data Loading', () => {
     beforeEach(() => {
+        store.dispatch(resetBoardState())
         server.use(
             http.get(`${SERVER_PATH}/api/users`, () => {
                 return HttpResponse.json({
@@ -69,7 +56,7 @@ describe('Board Data Loading', () => {
             </Provider>
         )
 
-        const boardRegion = await screen.findByRole('region', { name: 'Boards' })
+        const boardRegion = await screen.findByRole('region', { name: /Boards/i })
 
         expect(
             await within(boardRegion).findByTestId('no-boards')

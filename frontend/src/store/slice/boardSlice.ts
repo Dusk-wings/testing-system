@@ -15,7 +15,7 @@ const initialState: InitialState = {
 
 export const getBoardData = createAsyncThunk<Board[], void, { rejectValue: string }>("board/getBoards", async (_, { rejectWithValue }) => {
     try {
-        const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
+        const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000';
         const response = await fetch(`${SERVER_PATH}/api/boards`, {
             credentials: "include",
             method: 'GET',
@@ -54,7 +54,11 @@ const boardSlice = createSlice({
                 board.description = action.payload.description;
                 board.visibility = action.payload.visibility;
             }
-
+        },
+        resetBoardState: (state) => {
+            state.boards = [];
+            state.loading = false;
+            state.error = null;
         },
     },
     extraReducers: (builder) => {
@@ -74,5 +78,5 @@ const boardSlice = createSlice({
     }
 });
 
-export const { addBoard, removeBoard, updateBoard } = boardSlice.actions;
+export const { addBoard, removeBoard, updateBoard, resetBoardState } = boardSlice.actions;
 export default boardSlice.reducer;

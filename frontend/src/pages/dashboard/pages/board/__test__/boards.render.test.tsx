@@ -3,14 +3,16 @@ import { createMemoryRouter, RouterProvider } from "react-router"
 import { routerInstance } from "../../../../../router/router"
 import { server } from "../../../../../test/server"
 import { delay, http, HttpResponse } from "msw"
-import { BOARD_DATA_RESPONSE } from "./boards.api.test"
+import { BOARD_DATA_RESPONSE } from "./boards.data"
 import { Provider } from "react-redux"
 import store from "../../../../../store/store"
+import { resetBoardState } from "../../../../../store/slice/boardSlice"
 
 const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000';
 
 describe('Board Page', () => {
     beforeEach(() => {
+        store.dispatch(resetBoardState())
         server.use(
             http.get(`${SERVER_PATH}/api/users`, () => {
                 return HttpResponse.json({
