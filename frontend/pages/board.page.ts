@@ -44,7 +44,10 @@ export class BoardPage {
         await this.page.getByRole('textbox', { name: 'Title' }).fill(cardTitle);
         await this.page.getByRole('textbox', { name: 'Description' }).click();
         await this.page.getByRole('textbox', { name: 'Description' }).fill(cardDescription);
-        await this.page.getByRole('textbox', { name: 'Deadline' }).fill('2026-03-27');
+        const date = new Date();
+        date.setDate(date.getDate() + 1);
+        const formattedDate = date.toISOString().split('T')[0];
+        await this.page.getByRole('textbox', { name: 'Deadline' }).fill(formattedDate);
         await this.page.getByRole('button', { name: 'form-operation-button' }).click();
     }
 
