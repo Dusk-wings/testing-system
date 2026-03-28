@@ -31,75 +31,75 @@ jobs:
           cd backend
           npm test
 
-    frontend-test:
-      runs-on: ubuntu-latest
+  frontend-test:
+    runs-on: ubuntu-latest
       
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Setup Node.js
-          uses: actions/setup-node@v4
-          with:
-            node-version: 22.20.0
-            cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.20.0
+          cache: 'npm'
 
-        - name: Install Frontend Dependencies
-          run: |
-            cd frontend
-            npm install
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm install
 
-        - name: Run Frontend Tests
-          run: |
-            cd frontend
-            npx vitest run --maxWorkers=1
-          env:
-            VITE_BACKEND_PATH: http://localhost:3000
+      - name: Run Frontend Tests
+        run: |
+          cd frontend
+          npx vitest run --maxWorkers=1
+        env:
+          VITE_BACKEND_PATH: http://localhost:3000
 
-    e2e-test:
-      needs: [backend-test, frontend-test]
-      runs-on: ubuntu-latest
+  e2e-test:
+    needs: [backend-test, frontend-test]
+    runs-on: ubuntu-latest
       
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Setup Node.js
-          uses: actions/setup-node@v4
-          with:
-            node-version: 22.20.0
-            cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.20.0
+          cache: 'npm'
 
-        - name: Install Frontend Dependencies
-          run: |
-            cd frontend
-            npm install
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm install
         
-        - name: Install Backend Dependencies
-          run: |
-            cd backend
-            npm install
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          npm install
 
-        - name: Setup environment variables
-          run: |
-            # backend
-            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env
-            echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> backend/.env
-            echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> backend/.env
-            echo "PORT=${{ secrets.SERVER_PORT }}" >> backend/.env
+      - name: Setup environment variables
+        run: |
+          # backend
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> backend/.env
+          echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> backend/.env
+          echo "PORT=${{ secrets.SERVER_PORT }}" >> backend/.env
 
-            # frontend (Vite!)
-            echo "VITE_BACKEND_PATH=${{ secrets.VITE_BACKEND_PATH }}" >> frontend/.env
+          # frontend (Vite!)
+          echo "VITE_BACKEND_PATH=${{ secrets.VITE_BACKEND_PATH }}" >> frontend/.env
 
-        - name: Install Playwright
-          run: |
-            cd frontend
-            npx playwright install --with-deps
+      - name: Install Playwright
+        run: |
+          cd frontend
+          npx playwright install --with-deps
 
-        - name: Run E2E Tests
-          run: |
-            cd frontend
-            npx playwright test
+      - name: Run E2E Tests
+        run: |
+          cd frontend
+          npx playwright test
           
 
     # runs-on: ubuntu-latest
