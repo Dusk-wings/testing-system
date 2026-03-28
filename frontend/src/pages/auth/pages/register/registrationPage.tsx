@@ -33,7 +33,7 @@ function RegistrationPage() {
 
     const onSubmit = async (data: RegisterDataType) => {
         try {
-            const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH;
+            const SERVER_PATH = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:3000';
             const register = await fetch(`${SERVER_PATH}/api/users`, {
                 method: "POST",
                 headers: {
@@ -48,6 +48,7 @@ function RegistrationPage() {
                     type: 'manual',
                     message: response.message
                 })
+                return;
             }
             navigator('/dashboard', { replace: true })
         } catch (error) {
