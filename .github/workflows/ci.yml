@@ -7,60 +7,152 @@ on:
     branches: [ "master" ]
 
 jobs:
-  test:
 
+  backend-test:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
-        with: 
+        with:
           node-version: 22.20.0
+          cache: 'npm'
 
-      - name: Back-End Dependencie Install
+      - name: Install Backend Dependencies
         run: |
           cd backend
           npm install
 
-      - name: Run Back-End Tests
+      - name: Run Backend Tests
         run: |
           cd backend
           npm test
+
+    frontend-test:
+      runs-on: ubuntu-latest
       
-      - name: Front-end Dependencie Install
-        run: |
-          cd frontend
-          npm install
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Run Front-end Tests
-        run: |
-          cd frontend
-          npx vitest run --maxWorkers=1
-        env:
-          VITE_BACKEND_PATH: http://localhost:3000
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: 22.20.0
+            cache: 'npm'
 
-      - name: Setup environment variables
-        run: |
-          # backend
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> backend/.env
-          echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> backend/.env
-          echo "PORT=${{ secrets.SERVER_PORT }}" >> backend/.env
+        - name: Install Frontend Dependencies
+          run: |
+            cd frontend
+            npm install
 
-          # frontend (Vite!)
-          echo "VITE_BACKEND_PATH=${{ secrets.VITE_BACKEND_PATH }}" >> frontend/.env
+        - name: Run Frontend Tests
+          run: |
+            cd frontend
+            npx vitest run --maxWorkers=1
+          env:
+            VITE_BACKEND_PATH: http://localhost:3000
 
-      - name: Install Playwright
-        run: |
-          cd frontend
-          npx playwright install --with-deps
+    e2e-test:
+      needs: [backend-test, frontend-test]
+      runs-on: ubuntu-latest
+      
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Run E2E Tests
-        run: |
-          cd frontend
-          npx playwright test
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: 22.20.0
+            cache: 'npm'
 
-  
+        - name: Install Frontend Dependencies
+          run: |
+            cd frontend
+            npm install
+        
+        - name: Install Backend Dependencies
+          run: |
+            cd backend
+            npm install
+
+        - name: Setup environment variables
+          run: |
+            # backend
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env
+            echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> backend/.env
+            echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> backend/.env
+            echo "PORT=${{ secrets.SERVER_PORT }}" >> backend/.env
+
+            # frontend (Vite!)
+            echo "VITE_BACKEND_PATH=${{ secrets.VITE_BACKEND_PATH }}" >> frontend/.env
+
+        - name: Install Playwright
+          run: |
+            cd frontend
+            npx playwright install --with-deps
+
+        - name: Run E2E Tests
+          run: |
+            cd frontend
+            npx playwright test
+          
+
+    # runs-on: ubuntu-latest
+
+    # steps:
+    #   - name: Checkout code
+    #     uses: actions/checkout@v4
+
+    #   - name: Setup Node.js
+    #     uses: actions/setup-node@v4
+    #     with: 
+    #       node-version: 22.20.0
+
+    #   - name: Back-End Dependencie Install
+    #     run: |
+    #       cd backend
+    #       npm install
+
+    #   - name: Run Back-End Tests
+    #     run: |
+    #       cd backend
+    #       npm test
+      
+    #   - name: Front-end Dependencie Install
+    #     run: |
+    #       cd frontend
+    #       npm install
+
+    #   - name: Run Front-end Tests
+    #     run: |
+    #       cd frontend
+    #       npx vitest run --maxWorkers=1
+    #     env:
+    #       VITE_BACKEND_PATH: http://localhost:3000
+
+    #   - name: Setup environment variables
+    #     run: |
+    #       # backend
+    #       echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env
+    #       echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> backend/.env
+    #       echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> backend/.env
+    #       echo "PORT=${{ secrets.SERVER_PORT }}" >> backend/.env
+
+    #       # frontend (Vite!)
+    #       echo "VITE_BACKEND_PATH=${{ secrets.VITE_BACKEND_PATH }}" >> frontend/.env
+
+    #   - name: Install Playwright
+    #     run: |
+    #       cd frontend
+    #       npx playwright install --with-deps
+
+    #   - name: Run E2E Tests
+    #     run: |
+    #       cd frontend
+    #       npx playwright test
+
