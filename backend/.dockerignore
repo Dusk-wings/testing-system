@@ -1,0 +1,32 @@
+node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+.git
+.gitignore
+
+# environment files
+.env
+.env.*
+
+# logs
+logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# build output
+dist
+build
+.next
+out
+
+# coverage
+coverage
+
+# IDE files
+.vscode
+.idea
+

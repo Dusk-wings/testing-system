@@ -23,7 +23,7 @@ function ContentCard({
     contentHeading,
     contentDescription,
     contentImage,
-    contentImageAlt,
+    // contentImageAlt,
     visibilityStatus,
     lastUpdated,
     id

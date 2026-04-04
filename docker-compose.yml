@@ -1,0 +1,30 @@
+# version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    container_name: backend-testing
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    # enviroment:    if not giving an env use the enviroment
+    #   PORT : 1234
+    restart: on-failure
+    volumes:
+      - uploads:/app/uploads
+  
+  frontend:
+    build: ./frontend
+    container_name: frontend-testing
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./frontend/.env
+    restart: on-failure
+    command: ["npm","run","dev","--","--host"]
+    depends_on:
+      - backend
+
+volumes:
+  uploads:
